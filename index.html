@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dezy Camp Platform · V2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════
+   TOKENS
+════════════════════════════ */
+:root {
+  --ink:      #0B1929;
+  --ink-2:    #1A2E45;
+  --ink-3:    #243D58;
+  --teal:     #00B8C4;
+  --teal-2:   #009EAA;
+  --teal-3:   #007A84;
+  --teal-glow: rgba(0,184,196,.18);
+  --sky:      #E8F8F9;
+  --sky-2:    #D0F1F3;
+  --orange:   #FF6B35;
+  --orange-2: #E55A26;
+  --orange-gl: rgba(255,107,53,.15);
+  --green:    #12B76A;
+  --green-2:  #05965A;
+  --amber:    #F79009;
+  --amber-2:  #DC6803;
+  --red:      #F04438;
+  --red-2:    #D92D20;
+  --purple:   #7C5CFC;
+  --bg:       #F2F6FA;
+  --bg-2:     #E8EEF5;
+  --wh:       #FFFFFF;
+  --g50:      #F8FAFC;
+  --g100:     #F1F5F9;
+  --g150:     #E8EDF3;
+  --g200:     #DDE3EC;
+  --g300:     #C1CBDA;
+  --g400:     #8B97A8;
+  --g500:     #5F6E82;
+  --g600:     #3F4E60;
+  --g700:     #2A3747;
+  --g800:     #1C2B3C;
+  --f-head:   'DM Serif Display', Georgia, serif;
+  --f-body:   'Plus Jakarta Sans', sans-serif;
+  --f-mono:   'IBM Plex Mono', monospace;
+  --r-sm:     8px;
+  --r:        12px;
+  --r-lg:     16px;
+  --r-xl:     20px;
+  --r-2xl:    24px;
+  --sh-sm:    0 1px 4px rgba(11,25,41,.06);
+  --sh:       0 2px 8px rgba(11,25,41,.08), 0 1px 3px rgba(11,25,41,.04);
+  --sh-md:    0 4px 16px rgba(11,25,41,.1), 0 2px 6px rgba(11,25,41,.04);
+  --sh-lg:    0 12px 32px rgba(11,25,41,.12), 0 4px 12px rgba(11,25,41,.05);
+  --sh-xl:    0 24px 56px rgba(11,25,41,.16);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family:var(--f-body); background:var(--bg); color:var(--g700); font-size:14px; line-height:1.5; }
+h1,h2,h3,h4 { font-family:var(--f-head); font-weight:400; }
+button { font-family:var(--f-body); cursor:pointer; }
+input, select, textarea { font-family:var(--f-body); }
+
+/* ════════════════════════════
+   SCREENS
+════════════════════════════ */
+.screen { display:none; min-height:calc(100vh - 44px); }
+.screen.active { display:block; }
+.screen-flex { display:none; flex-direction:row; min-height:calc(100vh - 44px); }
+.screen-flex.active { display:flex; }
+
+/* ════════════════════════════
+   DEMO NAV
+════════════════════════════ */
+.demo-nav {
+  position:sticky; top:0; z-index:9999;
+  display:flex; align-items:center; gap:5px;
+  padding:8px 16px;
+  background:var(--ink);
+  border-bottom:2px solid rgba(0,184,196,.25);
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.demo-nav::-webkit-scrollbar { display:none; }
+.demo-nav-tag {
+  font-size:9px; font-weight:700; color:rgba(255,255,255,.28);
+  text-transform:uppercase; letter-spacing:.9px; margin-right:4px; flex-shrink:0;
+}
+.dnav-btn {
+  flex-shrink:0; padding:5px 11px; border-radius:6px;
+  font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.45); background:transparent; transition:all .18s;
+}
+.dnav-btn:hover, .dnav-btn.on { background:var(--teal); color:#fff; border-color:var(--teal); }
+
+/* ════════════════════════════
+   BUTTONS
+════════════════════════════ */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  padding:10px 20px; border-radius:var(--r); font-size:13px; font-weight:700;
+  border:none; cursor:pointer; transition:all .18s; text-decoration:none;
+  white-space:nowrap; letter-spacing:.1px;
+}
+.btn-teal { background:var(--teal); color:#fff; }
+.btn-teal:hover { background:var(--teal-2); box-shadow:0 4px 14px rgba(0,184,196,.3); transform:translateY(-1px); }
+.btn-ink { background:var(--ink); color:#fff; }
+.btn-ink:hover { background:var(--ink-2); transform:translateY(-1px); box-shadow:0 4px 14px rgba(11,25,41,.25); }
+.btn-orange { background:var(--orange); color:#fff; }
+.btn-orange:hover { background:var(--orange-2); box-shadow:0 4px 14px rgba(255,107,53,.3); transform:translateY(-1px); }
+.btn-green { background:#25D366; color:#fff; }
+.btn-green:hover { background:#1eb85a; }
+.btn-ghost { background:transparent; color:var(--g500); border:1.5px solid var(--g200); }
+.btn-ghost:hover { border-color:var(--teal); color:var(--teal); }
+.btn-ghost-wh { background:transparent; color:rgba(255,255,255,.6); border:1.5px solid rgba(255,255,255,.15); }
+.btn-ghost-wh:hover { border-color:rgba(255,255,255,.5); color:#fff; }
+.btn-lg { padding:13px 26px; font-size:14px; border-radius:var(--r-lg); }
+.btn-sm { padding:6px 12px; font-size:11px; border-radius:var(--r-sm); }
+.btn-xl { padding:16px 32px; font-size:15px; border-radius:var(--r-xl); }
+.btn-full { width:100%; }
+.btn-icon { width:36px; height:36px; padding:0; border-radius:var(--r); font-size:16px; }
+
+/* ════════════════════════════
+   FORMS
+════════════════════════════ */
+.fl { display:block; font-size:10px; font-weight:800; color:var(--g400); text-transform:uppercase; letter-spacing:.75px; margin-bottom:6px; }
+.fi, .fs {
+  width:100%; padding:10px 13px; border:1.5px solid var(--g200); border-radius:var(--r);
+  font-size:13px; color:var(--g700); background:var(--wh); outline:none;
+  transition:border-color .18s, box-shadow .18s; appearance:none;
+}
+.fi:focus, .fs:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(0,184,196,.12); }
+.fi::placeholder { color:var(--g300); }
+.fg { margin-bottom:16px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+/* ════════════════════════════
+   CARD
+════════════════════════════ */
+.card { background:var(--wh); border-radius:var(--r-xl); border:1px solid var(--g150); box-shadow:var(--sh); }
+.cp { padding:22px 24px; }
+.cp-lg { padding:28px 32px; }
+
+/* ════════════════════════════
+   BADGE / CHIP
+════════════════════════════ */
+.badge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:20px; font-size:10px; font-weight:800; letter-spacing:.3px; }
+.badge-teal { background:rgba(0,184,196,.1); color:var(--teal-3); }
+.badge-green { background:rgba(18,183,106,.1); color:var(--green-2); }
+.badge-amber { background:rgba(247,144,9,.1); color:var(--amber-2); }
+.badge-red { background:rgba(240,68,56,.1); color:var(--red-2); }
+.badge-orange { background:rgba(255,107,53,.1); color:var(--orange-2); }
+.badge-ink { background:rgba(11,25,41,.07); color:var(--g500); }
+.badge-purple { background:rgba(124,92,252,.1); color:#5C3FCA; }
+
+.chip { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+.chip::before { content:''; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.chip-live { background:rgba(18,183,106,.08); color:var(--green-2); }
+.chip-live::before { background:var(--green); animation:pulse-dot 1.4s infinite; }
+.chip-sent { background:rgba(247,144,9,.08); color:var(--amber-2); }
+.chip-sent::before { background:var(--amber); }
+.chip-booked { background:rgba(255,107,53,.08); color:var(--orange-2); }
+.chip-booked::before { background:var(--orange); }
+.chip-converted { background:rgba(18,183,106,.08); color:var(--green-2); }
+.chip-converted::before { background:var(--green); }
+.chip-screened { background:rgba(0,184,196,.08); color:var(--teal-2); }
+.chip-screened::before { background:var(--teal); }
+
+@keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+/* ════════════════════════════
+   LOGO
+════════════════════════════ */
+.logo-mark {
+  width:36px; height:36px; border-radius:10px;
+  background:linear-gradient(135deg,#00D4E0 0%,#0076FF 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+  box-shadow:0 3px 10px rgba(0,184,196,.3);
+}
+.logo-mark-sm { width:30px; height:30px; border-radius:8px; font-size:15px; }
+.logo-text { font-family:var(--f-head); font-size:18px; color:var(--ink); letter-spacing:-.2px; }
+.logo-text em { color:var(--teal); font-style:normal; }
+.logo-sub { font-size:10px; color:var(--g400); font-weight:600; letter-spacing:.3px; }
+
+/* ════════════════════════════
+   TOP BAR
+════════════════════════════ */
+.topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px; background:var(--wh); border-bottom:1px solid var(--g150);
+  position:sticky; top:0; z-index:50;
+}
+.topbar-logo { display:flex; align-items:center; gap:10px; }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+.camp-tag {
+  font-size:11px; font-weight:800; color:var(--ink); background:var(--g100);
+  padding:4px 10px; border-radius:20px; font-family:var(--f-mono); letter-spacing:.5px;
+}
+
+/* ════════════════════════════
+   PAGE WRAP
+════════════════════════════ */
+.pw { max-width:680px; margin:0 auto; padding:28px 20px; }
+.pw-sm { max-width:520px; margin:0 auto; padding:28px 20px; }
+.ph { margin-bottom:24px; }
+.ph-title { font-size:24px; color:var(--ink); margin-bottom:3px; letter-spacing:-.3px; }
+.ph-sub { font-size:13px; color:var(--g400); }
+
+/* ════════════════════════════
+   PROGRESS
+════════════════════════════ */
+.prog-steps { display:flex; justify-content:space-between; margin-bottom:8px; }
+.prog-step { font-size:11px; font-weight:700; color:var(--g300); }
+.prog-step.on { color:var(--teal); }
+.prog-step.done { color:var(--green); }
+.prog-bar { height:4px; background:var(--g150); border-radius:4px; overflow:hidden; margin-bottom:24px; }
+.prog-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--teal),#0076FF); transition:width .55s cubic-bezier(.4,0,.2,1); }
+
+/* ════════════════════════════
+   SCREENING MCQ
+════════════════════════════ */
+.q-block { margin-bottom:18px; }
+.q-text { font-size:13px; font-weight:700; color:var(--g700); margin-bottom:10px; line-height:1.45; }
+.q-hint { font-size:11px; color:var(--g400); margin-top:-6px; margin-bottom:10px; }
+.opts-col { display:flex; flex-direction:column; gap:6px; }
+.opt-row {
+  display:flex; align-items:center; gap:11px;
+  padding:10px 13px; border:1.5px solid var(--g200); border-radius:var(--r);
+  cursor:pointer; transition:all .16s; font-size:13px; font-weight:500; color:var(--g600);
+}
+.opt-row:hover { border-color:var(--teal); color:var(--teal-3); background:var(--sky); }
+.opt-row.sel { border-color:var(--teal); background:var(--sky); color:var(--teal-3); font-weight:700; }
+.opt-radio {
+  width:16px; height:16px; border-radius:50%; border:2px solid var(--g300);
+  flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .16s;
+}
+.opt-row.sel .opt-radio { border-color:var(--teal); background:var(--teal); }
+.opt-row.sel .opt-radio::after { content:''; width:5px; height:5px; border-radius:50%; background:#fff; }
+
+.tag-opts { display:flex; flex-wrap:wrap; gap:7px; }
+.tag-opt {
+  padding:7px 13px; border-radius:20px; border:1.5px solid var(--g200);
+  font-size:12px; font-weight:700; color:var(--g500); cursor:pointer; transition:all .16s;
+}
+.tag-opt:hover { border-color:var(--teal); color:var(--teal-3); }
+.tag-opt.sel { border-color:var(--teal); background:var(--sky); color:var(--teal-3); }
+
+.sev-bar { display:flex; gap:6px; }
+.sev-btn {
+  flex:1; padding:9px 5px; border-radius:var(--r); border:1.5px solid var(--g200);
+  font-size:11px; font-weight:800; text-align:center; cursor:pointer; transition:all .16s; color:var(--g400);
+}
+.sev-0:hover,.sev-0.sel { border-color:var(--green); background:rgba(18,183,106,.07); color:var(--green-2); }
+.sev-1:hover,.sev-1.sel { border-color:var(--amber); background:rgba(247,144,9,.07); color:var(--amber-2); }
+.sev-2:hover,.sev-2.sel { border-color:var(--orange); background:rgba(255,107,53,.07); color:var(--orange-2); }
+.sev-3:hover,.sev-3.sel { border-color:var(--red); background:rgba(240,68,56,.07); color:var(--red-2); }
+
+.obs-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.obs-card {
+  padding:12px 8px; border:1.5px solid var(--g200); border-radius:var(--r-lg);
+  cursor:pointer; text-align:center; transition:all .16s;
+}
+.obs-card:hover,.obs-card.sel { border-color:var(--teal); background:var(--sky); }
+.obs-card .oc-ico { font-size:20px; margin-bottom:4px; }
+.obs-card .oc-lbl { font-size:11px; font-weight:700; color:var(--g500); }
+.obs-card.sel .oc-lbl { color:var(--teal-3); }
+
+.step-nav { display:flex; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--g150); }
+
+/* ════════════════════════════
+   SCORE PAGE
+════════════════════════════ */
+.score-page-bg {
+  background:linear-gradient(180deg, #EAF8F9 0%, var(--bg) 40%);
+  min-height:calc(100vh - 44px);
+}
+
+/* Overall score ring */
+.score-hero-card {
+  background:var(--wh); border-radius:var(--r-2xl); border:1px solid var(--g150);
+  box-shadow:var(--sh-md); padding:28px 24px; margin-bottom:16px;
+}
+.patient-tag { font-size:13px; font-weight:600; color:var(--g400); margin-bottom:18px; }
+.patient-tag strong { color:var(--ink); }
+.score-ring-wrap { position:relative; width:170px; height:170px; margin:0 auto 12px; }
+.score-ring-wrap svg { transform:rotate(-90deg); }
+#v2-ring-track { fill:none; stroke:var(--g100); stroke-width:11; }
+#v2-ring-fill { fill:none; stroke-width:11; stroke-linecap:round; stroke-dasharray:503; stroke-dashoffset:503; transition:stroke-dashoffset 1.7s cubic-bezier(.25,.46,.45,.94); }
+.score-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+.score-num { font-family:var(--f-head); font-size:46px; line-height:1; letter-spacing:-2px; }
+.score-denom { font-size:12px; color:var(--g400); font-weight:600; }
+.score-label {
+  display:inline-block; margin-top:6px;
+  padding:5px 14px; border-radius:20px; font-size:11px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.7px;
+}
+.score-good { background:rgba(18,183,106,.1); color:var(--green-2); }
+.score-fair { background:rgba(247,144,9,.1); color:var(--amber-2); }
+.score-poor { background:rgba(255,107,53,.1); color:var(--orange-2); }
+.score-critical { background:rgba(240,68,56,.1); color:var(--red-2); }
+
+/* Multidimensional breakdown */
+.dim-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.dim-card {
+  background:var(--wh); border-radius:var(--r-lg); border:1px solid var(--g150);
+  box-shadow:var(--sh-sm); padding:14px 16px;
+}
+.dim-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+.dim-label { font-size:11px; font-weight:800; color:var(--g500); text-transform:uppercase; letter-spacing:.5px; }
+.dim-score { font-family:var(--f-head); font-size:22px; letter-spacing:-.5px; }
+.dim-bar { height:6px; background:var(--g150); border-radius:6px; overflow:hidden; }
+.dim-fill { height:100%; border-radius:6px; transition:width 1.2s cubic-bezier(.25,.46,.45,.94); }
+.dim-icon { font-size:20px; }
+.dim-note { font-size:10px; color:var(--g400); margin-top:5px; }
+
+/* Issues list */
+.issues-section { margin-bottom:14px; }
+.section-lbl { font-size:11px; font-weight:800; color:var(--g400); text-transform:uppercase; letter-spacing:.6px; margin-bottom:10px; }
+.issue-row {
+  display:flex; align-items:center; gap:10px;
+  padding:11px 14px; border-radius:var(--r-lg); margin-bottom:7px;
+  border-left:3px solid;
+}
+.issue-critical { background:rgba(240,68,56,.05); border-color:var(--red); }
+.issue-moderate { background:rgba(247,144,9,.06); border-color:var(--amber); }
+.issue-mild { background:rgba(0,184,196,.05); border-color:var(--teal); }
+.issue-row-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.issue-row-text { font-size:13px; font-weight:600; color:var(--g700); flex:1; }
+.issue-row-sev { font-size:10px; font-weight:800; color:var(--g400); }
+
+/* Recommendations */
+.rec-item-card {
+  display:flex; gap:12px; padding:13px 14px; background:var(--wh);
+  border-radius:var(--r-lg); border:1px solid var(--g150); box-shadow:var(--sh-sm); margin-bottom:8px;
+}
+.rec-ico { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.rec-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:2px; }
+.rec-desc { font-size:12px; color:var(--g500); line-height:1.4; }
+.rec-urgency { font-size:10px; font-weight:700; margin-top:4px; }
+.urg-high { color:var(--orange-2); }
+.urg-med { color:var(--amber-2); }
+.urg-low { color:var(--teal-3); }
+
+/* PDF preview button */
+.pdf-preview-strip {
+  background:var(--g50); border:1px dashed var(--g200); border-radius:var(--r-lg);
+  padding:14px 16px; display:flex; align-items:center; gap:12px; margin-bottom:14px;
+  cursor:pointer;
+}
+.pdf-thumb { width:44px; height:56px; background:linear-gradient(160deg,var(--ink) 0%,var(--ink-2) 100%); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.pdf-meta { flex:1; }
+.pdf-title { font-size:13px; font-weight:700; color:var(--ink); }
+.pdf-sub { font-size:11px; color:var(--g400); margin-top:2px; }
+
+/* ════════════════════════════
+   VOUCHER
+════════════════════════════ */
+.voucher-wrap {
+  background:linear-gradient(145deg,#081929 0%,#0E2B4A 55%,#123660 100%);
+  border-radius:var(--r-2xl); padding:24px; position:relative; overflow:hidden;
+  margin-bottom:18px;
+  box-shadow:0 16px 40px rgba(11,25,41,.25), 0 4px 12px rgba(0,0,0,.15);
+}
+.v-glow-1 { position:absolute; width:320px; height:320px; border-radius:50%; background:radial-gradient(circle,rgba(0,184,196,.12) 0%,transparent 65%); top:-120px; right:-100px; pointer-events:none; }
+.v-glow-2 { position:absolute; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(0,118,255,.09) 0%,transparent 65%); bottom:-80px; left:-60px; pointer-events:none; }
+.v-shine {
+  position:absolute; top:0; left:-120%; width:55%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);
+  animation:shine 4s ease infinite 1.5s; pointer-events:none;
+}
+@keyframes shine { 0%{left:-120%} 100%{left:150%} }
+
+.v-brand-row { display:flex; align-items:center; gap:10px; margin-bottom:16px; position:relative; z-index:1; }
+.v-brand-mark { width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--teal),#0076FF); display:flex; align-items:center; justify-content:center; font-size:14px; }
+.v-brand-name { font-size:13px; font-weight:800; color:rgba(255,255,255,.9); letter-spacing:.3px; }
+.v-brand-tagline { font-size:10px; color:rgba(255,255,255,.35); margin-top:1px; }
+
+.v-body { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; position:relative; z-index:1; }
+.v-offer-label { font-size:11px; font-weight:700; color:var(--teal); letter-spacing:.5px; text-transform:uppercase; margin-bottom:6px; }
+.v-offer-title { font-family:var(--f-head); font-size:26px; color:#fff; line-height:1.1; }
+.v-offer-title em { color:var(--teal); font-style:normal; }
+.v-offer-sub { font-size:11px; color:rgba(255,255,255,.4); margin-top:5px; }
+.v-value { text-align:right; }
+.v-value-num { font-family:var(--f-head); font-size:40px; color:var(--teal); line-height:1; }
+.v-value-orig { font-size:11px; color:rgba(255,255,255,.35); text-decoration:line-through; }
+.v-value-label { font-size:10px; color:rgba(255,255,255,.4); font-weight:600; }
+
+.v-divider {
+  border:none; border-top:1px dashed rgba(255,255,255,.12); margin:0 0 14px;
+  position:relative; z-index:1;
+}
+.v-divider::before,.v-divider::after {
+  content:''; position:absolute; top:50%; transform:translateY(-50%);
+  width:18px; height:18px; border-radius:50%; background:var(--bg);
+}
+.v-divider::before { left:-33px; }
+.v-divider::after { right:-33px; }
+
+.v-code-row { display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; margin-bottom:12px; }
+.v-code-lbl { font-size:9px; font-weight:800; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.8px; margin-bottom:5px; }
+.v-code-val { font-family:var(--f-mono); font-size:20px; font-weight:600; color:var(--teal); letter-spacing:2px; }
+.v-copy { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.55); padding:7px 13px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; font-family:var(--f-body); transition:all .18s; }
+.v-copy:hover { background:rgba(255,255,255,.12); color:#fff; }
+
+.v-footer { display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; }
+.v-expiry { font-size:11px; color:rgba(255,255,255,.35); }
+.v-expiry strong { color:rgba(255,255,255,.65); }
+.v-clinics { font-size:10px; font-weight:700; color:rgba(255,255,255,.3); text-align:right; }
+
+/* ════════════════════════════
+   BOOKING PANEL (Own System)
+════════════════════════════ */
+.booking-panel {
+  background:linear-gradient(135deg,var(--orange) 0%,#CC4A1A 100%);
+  border-radius:var(--r-xl); padding:22px; margin-bottom:14px; position:relative; overflow:hidden;
+}
+.booking-panel::before { content:'🦷'; position:absolute; font-size:72px; right:-10px; bottom:-12px; opacity:.12; line-height:1; }
+.bp-label { font-size:10px; font-weight:800; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px; }
+.bp-title { font-family:var(--f-head); font-size:20px; color:#fff; margin-bottom:4px; }
+.bp-sub { font-size:12px; color:rgba(255,255,255,.65); margin-bottom:14px; line-height:1.4; }
+.bp-clinic-select {
+  width:100%; padding:10px 13px; border-radius:var(--r); border:1.5px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.15); color:#fff; font-size:13px; font-weight:600;
+  font-family:var(--f-body); margin-bottom:10px; appearance:none; outline:none;
+}
+.bp-clinic-select option { color:var(--g700); background:var(--wh); }
+
+/* ════════════════════════════
+   THANK YOU
+════════════════════════════ */
+.ty-check {
+  width:68px; height:68px; border-radius:50%; margin:0 auto 16px;
+  background:linear-gradient(135deg,var(--green),var(--green-2));
+  display:flex; align-items:center; justify-content:center; font-size:30px; color:#fff;
+  box-shadow:0 6px 22px rgba(18,183,106,.35); animation:popIn .42s cubic-bezier(.18,.89,.32,1.28);
+}
+@keyframes popIn { 0%{transform:scale(0) rotate(-10deg);opacity:0;} 100%{transform:scale(1) rotate(0deg);opacity:1;} }
+.ty-title { font-family:var(--f-head); font-size:26px; color:var(--ink); text-align:center; margin-bottom:4px; letter-spacing:-.3px; }
+.ty-sub { font-size:13px; color:var(--g400); text-align:center; line-height:1.55; margin-bottom:24px; }
+
+.share-stack { display:flex; flex-direction:column; gap:9px; margin-bottom:16px; }
+
+/* ════════════════════════════
+   ADMIN SIDEBAR
+════════════════════════════ */
+.sidebar {
+  width:220px; background:var(--ink); flex-shrink:0;
+  display:flex; flex-direction:column; min-height:calc(100vh - 44px);
+}
+.sb-logo { padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,.06); display:flex; align-items:center; gap:10px; }
+.sb-logo-text { font-family:var(--f-head); font-size:17px; color:#fff; letter-spacing:-.1px; }
+.sb-logo-text em { color:var(--teal); font-style:normal; }
+
+.sb-camp-card { margin:12px 12px 4px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:12px 14px; }
+.sb-camp-lbl { font-size:9px; font-weight:800; color:rgba(255,255,255,.28); text-transform:uppercase; letter-spacing:.8px; margin-bottom:5px; }
+.sb-camp-id { font-family:var(--f-mono); font-size:12px; font-weight:600; color:rgba(255,255,255,.8); }
+.sb-camp-partner { font-size:11px; color:rgba(255,255,255,.35); margin-top:2px; }
+.sb-live-dot { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:var(--green); margin-top:6px; }
+.sb-live-dot::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse-dot 1.4s infinite; }
+
+.sb-nav { flex:1; padding:12px 0 0; overflow-y:auto; }
+.sb-section { font-size:9px; font-weight:800; color:rgba(255,255,255,.2); text-transform:uppercase; letter-spacing:.9px; padding:14px 16px 5px; }
+.sb-item {
+  display:flex; align-items:center; gap:10px; padding:9px 16px;
+  font-size:12px; font-weight:600; color:rgba(255,255,255,.45);
+  cursor:pointer; transition:all .18s; border-left:3px solid transparent;
+}
+.sb-item:hover,.sb-item.on { color:#fff; background:rgba(255,255,255,.05); border-left-color:var(--teal); }
+.sb-item .si { font-size:14px; }
+.sb-badge { background:var(--teal); color:#fff; font-size:9px; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:auto; }
+
+.sb-user { padding:14px 16px; border-top:1px solid rgba(255,255,255,.06); }
+.sb-user-row { display:flex; align-items:center; gap:8px; }
+.sb-avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--teal),#0076FF); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#fff; flex-shrink:0; }
+.sb-user-name { font-size:12px; font-weight:700; color:rgba(255,255,255,.7); }
+.sb-user-role { font-size:10px; color:rgba(255,255,255,.3); }
+
+/* ════════════════════════════
+   ADMIN MAIN
+════════════════════════════ */
+.admin-main { flex:1; overflow-y:auto; background:var(--bg); }
+.admin-topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 24px; background:var(--wh); border-bottom:1px solid var(--g150);
+  position:sticky; top:0; z-index:10;
+}
+.at-title { font-size:16px; font-weight:800; color:var(--ink); }
+.at-sub { font-size:11px; color:var(--g400); margin-top:1px; }
+.at-actions { display:flex; gap:8px; }
+
+.ac { padding:22px 24px; }
+.tp { display:none; }
+.tp.on { display:block; }
+
+/* Stats row */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+.stat-card {
+  background:var(--wh); border-radius:var(--r-xl); padding:16px 18px;
+  border:1px solid var(--g150); box-shadow:var(--sh); transition:all .2s;
+}
+.stat-card:hover { transform:translateY(-2px); box-shadow:var(--sh-md); }
+.sc-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; margin-bottom:10px; }
+.sc-val { font-family:var(--f-head); font-size:28px; color:var(--ink); letter-spacing:-1px; line-height:1; }
+.sc-lbl { font-size:10px; font-weight:800; color:var(--g400); text-transform:uppercase; letter-spacing:.5px; margin-top:5px; }
+.sc-delta { font-size:11px; font-weight:700; margin-top:3px; }
+.up { color:var(--green-2); } .down { color:var(--red-2); } .mid { color:var(--amber-2); }
+
+/* Funnel */
+.charts-grid { display:grid; grid-template-columns:3fr 2fr; gap:14px; margin-bottom:16px; }
+.chart-card { background:var(--wh); border-radius:var(--r-xl); padding:20px; border:1px solid var(--g150); box-shadow:var(--sh); }
+.chart-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; }
+.chart-title small { font-size:11px; font-weight:600; color:var(--g400); }
+
+.funnel-stage { margin-bottom:9px; }
+.fs-meta { display:flex; justify-content:space-between; margin-bottom:3px; }
+.fs-label { font-size:12px; font-weight:700; color:var(--g600); display:flex; align-items:center; gap:6px; }
+.fs-num { font-size:12px; font-weight:800; color:var(--g700); }
+.fs-pct { font-size:11px; color:var(--g400); font-weight:600; margin-left:3px; }
+.fs-bar-bg { height:28px; background:var(--g100); border-radius:8px; overflow:hidden; }
+.fs-fill { height:100%; border-radius:8px; display:flex; align-items:center; padding:0 10px; font-size:12px; font-weight:800; color:#fff; transition:width 1.3s cubic-bezier(.25,.46,.45,.94); }
+.fs-cta { font-size:10px; font-weight:600; color:var(--g400); margin-top:2px; }
+
+/* Revenue attribution */
+.rev-card {
+  background:linear-gradient(145deg,var(--ink) 0%,var(--ink-2) 100%);
+  border-radius:var(--r-xl); padding:20px 22px; border:1px solid rgba(255,255,255,.05);
+  margin-bottom:14px; display:flex; align-items:center; gap:20px;
+}
+.rev-icon { font-size:32px; }
+.rev-content { flex:1; }
+.rev-label { font-size:10px; font-weight:800; color:var(--teal); text-transform:uppercase; letter-spacing:.8px; margin-bottom:5px; }
+.rev-val { font-family:var(--f-head); font-size:28px; color:#fff; letter-spacing:-.5px; }
+.rev-sub { font-size:12px; color:rgba(255,255,255,.4); margin-top:2px; }
+.rev-breakdown { display:flex; gap:12px; margin-top:10px; }
+.rev-item { font-size:11px; color:rgba(255,255,255,.5); }
+.rev-item strong { color:rgba(255,255,255,.8); display:block; font-size:14px; font-weight:800; }
+
+/* Patient table */
+.table-wrap { background:var(--wh); border-radius:var(--r-xl); border:1px solid var(--g150); overflow:hidden; box-shadow:var(--sh); }
+.table-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--g100); }
+.th-title { font-size:14px; font-weight:800; color:var(--ink); }
+.tbl { width:100%; border-collapse:collapse; }
+.tbl th { text-align:left; padding:9px 16px; font-size:9px; font-weight:800; color:var(--g400); text-transform:uppercase; letter-spacing:.7px; background:var(--g50); border-bottom:1px solid var(--g200); }
+.tbl td { padding:12px 16px; border-bottom:1px solid var(--g100); }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:var(--g50); }
+.td-pid { font-family:var(--f-mono); font-size:11px; color:var(--g400); }
+.td-name { font-size:13px; font-weight:700; color:var(--ink); }
+.td-score { font-family:var(--f-head); font-size:15px; }
+.score-g { color:var(--green-2); } .score-f { color:var(--amber-2); } .score-p { color:var(--orange-2); } .score-c { color:var(--red-2); }
+.dim-pills { display:flex; gap:3px; flex-wrap:wrap; }
+.dim-pill { font-size:9px; font-weight:800; padding:2px 6px; border-radius:10px; }
+
+/* Voucher lookup */
+.lookup-card { background:var(--wh); border-radius:var(--r-xl); border:1px solid var(--g150); box-shadow:var(--sh); padding:24px; margin-bottom:16px; }
+.lookup-input-row { display:flex; gap:10px; margin-bottom:20px; }
+.lookup-input-row .fi { flex:1; font-family:var(--f-mono); font-size:16px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; }
+.lookup-result {
+  background:var(--g50); border-radius:var(--r-lg); border:1px solid var(--g200);
+  padding:18px; display:none;
+}
+.lookup-result.found { display:block; border-color:var(--green); background:rgba(18,183,106,.04); }
+.lookup-result.invalid { display:block; border-color:var(--red); background:rgba(240,68,56,.04); }
+.lr-status-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.lr-ico { font-size:28px; }
+.lr-status-label { font-size:16px; font-weight:800; }
+.lr-patient-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.lr-field { background:var(--wh); border:1px solid var(--g200); border-radius:var(--r); padding:10px 12px; }
+.lr-field-lbl { font-size:9px; font-weight:800; color:var(--g400); text-transform:uppercase; letter-spacing:.6px; margin-bottom:3px; }
+.lr-field-val { font-size:13px; font-weight:700; color:var(--ink); }
+
+/* Gallabox / Integrations */
+.int-card { background:var(--wh); border-radius:var(--r-xl); border:1px solid var(--g150); box-shadow:var(--sh); overflow:hidden; margin-bottom:14px; }
+.int-head { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--g100); }
+.int-logo-row { display:flex; align-items:center; gap:10px; }
+.int-logo-box { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.int-name { font-size:14px; font-weight:800; color:var(--ink); }
+.int-desc { font-size:11px; color:var(--g400); margin-top:1px; }
+.int-body { padding:18px; }
+
+.template-card { background:var(--g50); border:1px solid var(--g200); border-radius:var(--r-lg); margin-bottom:10px; overflow:hidden; }
+.tc-head { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--wh); border-bottom:1px solid var(--g100); }
+.tc-title { font-size:12px; font-weight:800; color:var(--ink); }
+.tc-body { padding:14px; font-size:12px; line-height:1.7; color:var(--g600); white-space:pre-line; font-family:var(--f-mono); font-size:11px; }
+.tc-var { background:rgba(255,107,53,.1); color:var(--orange-2); padding:1px 5px; border-radius:4px; font-weight:700; }
+.tc-note { padding:8px 14px; background:rgba(0,184,196,.05); border-top:1px solid rgba(0,184,196,.12); font-size:11px; color:var(--teal-3); font-weight:600; }
+
+/* CRM export */
+.crm-field-map { display:grid; grid-template-columns:1fr auto 1fr; gap:0; }
+.crm-field-row { display:contents; }
+.crm-src, .crm-dst {
+  padding:9px 12px; border-bottom:1px solid var(--g100);
+  font-size:11px; font-family:var(--f-mono);
+}
+.crm-src { background:rgba(0,184,196,.04); color:var(--teal-3); font-weight:600; }
+.crm-dst { background:rgba(124,92,252,.04); color:#5C3FCA; font-weight:600; }
+.crm-arrow { padding:9px 8px; border-bottom:1px solid var(--g100); font-size:12px; color:var(--g400); display:flex; align-items:center; justify-content:center; }
+
+/* Metrics */
+.metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.metric-card { background:var(--wh); border-radius:var(--r-xl); padding:18px; border:1px solid var(--g150); box-shadow:var(--sh); }
+.mc-icon { font-size:22px; margin-bottom:10px; }
+.mc-name { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:3px; }
+.mc-desc { font-size:11px; color:var(--g500); line-height:1.4; margin-bottom:8px; }
+.mc-formula { font-family:var(--f-mono); font-size:10px; background:var(--g100); color:var(--g600); padding:5px 8px; border-radius:6px; display:inline-block; }
+.mc-target { font-size:11px; font-weight:800; color:var(--teal-3); margin-top:6px; }
+
+/* Score distribution mini-chart */
+.score-dist { display:flex; flex-direction:column; gap:7px; }
+.sd-row { display:flex; align-items:center; gap:8px; }
+.sd-label { font-size:10px; font-weight:700; width:40px; flex-shrink:0; }
+.sd-bg { flex:1; height:20px; background:var(--g100); border-radius:6px; overflow:hidden; }
+.sd-fill { height:100%; border-radius:6px; }
+.sd-n { font-size:11px; font-weight:700; color:var(--g600); width:20px; text-align:right; }
+
+/* Scoring engine panel */
+.scoring-engine { background:var(--g900,#0F172A); border-radius:var(--r-xl); padding:20px; }
+.se-row { display:grid; grid-template-columns:1fr auto auto; gap:12px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.se-row:last-child { border-bottom:none; }
+.se-dim { font-size:12px; color:rgba(255,255,255,.7); font-weight:600; }
+.se-weight { font-family:var(--f-mono); font-size:12px; color:var(--teal); font-weight:600; }
+.se-factors { font-size:10px; color:rgba(255,255,255,.35); }
+</style>
+
+<!-- DEMO NAV -->
+<div class="demo-nav">
+  <span class="demo-nav-tag">Dezy Camp</span>
+  <button class="dnav-btn on" onclick="go('s2')">① Camp Setup</button>
+  <button class="dnav-btn" onclick="go('s3')">② Register</button>
+  <button class="dnav-btn" onclick="go('s4')">③ Screening 1</button>
+  <button class="dnav-btn" onclick="go('s5')">④ Screening 2</button>
+  <button class="dnav-btn" onclick="go('s6')">⑤ Screening 3</button>
+  <button class="dnav-btn" onclick="go('s7')">⑥ Score Report</button>
+  <button class="dnav-btn" onclick="go('s8')">⑦ Thank You</button>
+  <button class="dnav-btn" onclick="go('s9')">⑧ Admin</button>
+</div>
+
+<!-- ════════════════════════════════════
+     S2 — CAMP SETUP
+════════════════════════════════════ -->
+<div id="s2" class="screen active">
+  <div class="topbar">
+    <div class="topbar-logo"><div class="logo-mark logo-mark-sm">🦷</div><div class="logo-text">Dezy <em>Camp</em></div></div>
+    <div class="topbar-right"><span style="font-size:11px;font-weight:600;color:var(--green-2);display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse-dot 1.4s infinite;"></span>Setup Mode</span></div>
+  </div>
+  <div class="pw">
+    <div class="ph"><h1 class="ph-title">New Camp Setup</h1><p class="ph-sub">Camp ID and QR registration link are auto-generated on create</p></div>
+
+    <!-- Camp ID hero -->
+    <div style="background:linear-gradient(135deg,var(--ink) 0%,var(--ink-2) 100%);border-radius:var(--r-2xl);padding:22px 26px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border:1px solid rgba(255,255,255,.06);">
+      <div>
+        <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;">Auto-Generated Camp ID</div>
+        <div style="font-family:var(--f-mono);font-size:22px;font-weight:600;color:#fff;letter-spacing:2px;" id="camp-id-display">DEZY-BLR-0127</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;font-weight:700;color:var(--teal);">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse-dot 1.4s infinite;"></span> Ready to activate
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="width:80px;height:80px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;" title="Click to download QR">
+          <div style="font-size:28px;">⬛</div>
+          <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.4px;">QR CODE</div>
+        </div>
+        <button class="btn btn-ghost-wh btn-sm" style="font-size:10px;padding:5px 10px;">Download Poster</button>
+      </div>
+    </div>
+
+    <div class="card cp" style="margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:14px;">Camp Details</div>
+      <div class="grid-2">
+        <div class="fg"><label class="fl">Camp Name</label><input class="fi" type="text" value="Infosys Wellness Day 2025"></div>
+        <div class="fg"><label class="fl">Partner / Host</label><input class="fi" type="text" value="Infosys Ltd."></div>
+        <div class="fg"><label class="fl">Location</label><input class="fi" type="text" value="Infosys SEZ, Whitefield, Bangalore"></div>
+        <div class="fg"><label class="fl">Camp Date</label><input class="fi" type="date" value="2025-01-27"></div>
+        <div class="fg"><label class="fl">Expected Footfall</label><input class="fi" type="number" value="150"></div>
+        <div class="fg"><label class="fl">Camp Type</label>
+          <select class="fs">
+            <option>Corporate Wellness</option>
+            <option>RWA / Residential</option>
+            <option>Coworking Space</option>
+            <option>Community / NGO</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="fg"><label class="fl">Nearest Dezy Clinic</label>
+          <select class="fs">
+            <option>Dezy Whitefield (2.1 km)</option>
+            <option>Dezy Indiranagar (8.4 km)</option>
+            <option>Dezy Koramangala (11 km)</option>
+            <option>Dezy HSR Layout (13 km)</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Voucher Validity</label>
+          <select class="fs">
+            <option>7 days</option>
+            <option selected>15 days</option>
+            <option>30 days</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Assigned Dentists</label><input class="fi" type="text" placeholder="Dr. Ananya Sharma, Dr. Kiran Rao"></div>
+    </div>
+
+    <!-- Gallabox config -->
+    <div class="card cp" style="margin-bottom:20px;border:1.5px solid rgba(0,184,196,.2);background:rgba(0,184,196,.02);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:10px;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:17px;">💬</div>
+          <div><div style="font-size:13px;font-weight:800;color:var(--ink);">Gallabox WhatsApp</div><div style="font-size:11px;color:var(--g400);">Auto-send reports & vouchers</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--green-2);">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--green);"></span>Connected
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="fg"><label class="fl">Gallabox Template — Report</label><input class="fi" value="dezy_camp_report_v2" style="font-family:var(--f-mono);font-size:12px;"></div>
+        <div class="fg"><label class="fl">Gallabox Template — Follow-up</label><input class="fi" value="dezy_camp_followup_d3" style="font-family:var(--f-mono);font-size:12px;"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="font-size:11px;color:var(--g400);">Booking link: <span style="font-family:var(--f-mono);font-size:11px;color:var(--teal-3);">dezy.in/book?camp=DEZY-BLR-0127&utm=camp-wa</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ink btn-lg" style="flex:2;" onclick="go('s3')">🚀 Activate Camp & Start Registrations</button>
+      <button class="btn btn-ghost btn-lg" style="flex:1;">Preview QR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     S3 — PATIENT REGISTRATION
+════════════════════════════════════ -->
+<div id="s3" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo"><div class="logo-mark logo-mark-sm">🦷</div><div class="logo-text">Dezy <em>Camp</em></div></div>
+    <div class="topbar-right"><span class="camp-tag">DEZY-BLR-0127</span><button class="btn btn-sm btn-ghost" onclick="go('s2')">← Setup</button></div>
+  </div>
+  <div class="pw-sm">
+    <!-- Counter banner -->
+    <div style="background:var(--ink);border-radius:var(--r-xl);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:3px;">Screened Today</div>
+        <div style="font-family:var(--f-head);font-size:34px;color:var(--teal);letter-spacing:-1px;line-height:1;">42</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;">of 150 expected</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;">Next Patient</div>
+        <div style="font-family:var(--f-mono);font-size:24px;font-weight:600;color:#fff;letter-spacing:1px;">P-043</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;">Infosys Wellness Day</div>
+      </div>
+    </div>
+
+    <div class="ph"><h1 class="ph-title">Register Patient</h1><p class="ph-sub">Staff enters details, or patient self-registers via QR link</p></div>
+
+    <div class="card cp">
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" type="text" placeholder="Patient's full name"></div>
+      <div class="grid-2">
+        <div class="fg"><label class="fl">Mobile Number</label><input class="fi" type="tel" placeholder="+91 98765 43210"></div>
+        <div class="fg"><label class="fl">Age</label><input class="fi" type="number" placeholder="34"></div>
+      </div>
+      <div class="fg"><label class="fl">Gender</label>
+        <div style="display:flex;gap:8px;">
+          <div class="tag-opt sel" onclick="selTag(this,'.gen')">Male</div>
+          <div class="tag-opt" onclick="selTag(this,'.gen')">Female</div>
+          <div class="tag-opt" onclick="selTag(this,'.gen')">Other</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="fg"><label class="fl">Email <span style="font-weight:400;color:var(--g300);">(optional)</span></label><input class="fi" type="email" placeholder="for report backup"></div>
+        <div class="fg"><label class="fl">Department</label><input class="fi" type="text" placeholder="e.g. Engineering, HR"></div>
+      </div>
+
+      <!-- Self-register QR strip -->
+      <div style="background:var(--sky);border:1.5px dashed rgba(0,184,196,.35);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;cursor:pointer;">
+        <div style="font-size:28px;">📷</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--teal-3);">Or scan patient's phone QR</div>
+          <div style="font-size:11px;color:var(--g400);margin-top:2px;">Auto-fills from pre-registration · 10 sec onboarding</div>
+        </div>
+      </div>
+
+      <button class="btn btn-ink btn-full btn-lg" onclick="go('s4')">Begin Dental Screening →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     S4 — SCREENING: HEALTH HISTORY
+════════════════════════════════════ -->
+<div id="s4" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo"><div class="logo-mark logo-mark-sm">🦷</div><div class="logo-text">Dezy <em>Camp</em></div></div>
+    <div class="topbar-right">
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;background:rgba(255,107,53,.1);color:var(--orange-2);padding:5px 11px;border-radius:20px;">P-043 · Arjun Sharma</div>
+      <button class="btn btn-sm btn-ghost" onclick="go('s3')">← Reg</button>
+    </div>
+  </div>
+  <div class="pw-sm">
+    <div class="prog-steps">
+      <span class="prog-step on">① Health History</span>
+      <span class="prog-step">② Clinical Obs.</span>
+      <span class="prog-step">③ Habits</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" style="width:33%"></div></div>
+
+    <div class="ph"><h1 class="ph-title">Health History</h1><p class="ph-sub">Ask patient — dentist records responses</p></div>
+
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-block">
+        <div class="q-text">1. Last dental visit?</div>
+        <div class="opts-col" data-q="lastVisit">
+          <div class="opt-row sel" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>Within 6 months</div>
+          <div class="opt-row" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>6–12 months ago</div>
+          <div class="opt-row" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>1–3 years ago</div>
+          <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>More than 3 years / Never</div>
+        </div>
+      </div>
+    </div>
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-block">
+        <div class="q-text">2. Tooth sensitivity? <span style="font-size:11px;color:var(--g400);font-weight:400;">(hot / cold / sweet)</span></div>
+        <div class="opts-col" data-q="sensitivity">
+          <div class="opt-row" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>None</div>
+          <div class="opt-row sel" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>Mild — occasional</div>
+          <div class="opt-row" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>Moderate — frequent</div>
+          <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>Severe — sharp pain</div>
+        </div>
+      </div>
+    </div>
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-block">
+        <div class="q-text">3. Bleeding gums?</div>
+        <div class="opts-col" data-q="bleeding">
+          <div class="opt-row" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>Never</div>
+          <div class="opt-row sel" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>Occasionally while brushing</div>
+          <div class="opt-row" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>Frequently</div>
+          <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>Spontaneous</div>
+        </div>
+      </div>
+    </div>
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-block">
+        <div class="q-text">4. Pain or jaw discomfort?</div>
+        <div class="opts-col" data-q="pain">
+          <div class="opt-row sel" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>None</div>
+          <div class="opt-row" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>Mild — on biting</div>
+          <div class="opt-row" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>Moderate — dull ache</div>
+          <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>Severe — throbbing / radiating</div>
+        </div>
+      </div>
+    </div>
+    <div class="card cp" style="margin-bottom:18px;">
+      <div class="q-block">
+        <div class="q-text">5. Systemic conditions?</div>
+        <div style="margin-top:8px;" class="tag-opts" id="systemic-tags">
+          <div class="tag-opt sel" data-tag="diabetes" onclick="this.classList.toggle('sel')">Diabetes</div>
+          <div class="tag-opt" data-tag="hypertension" onclick="this.classList.toggle('sel')">Hypertension</div>
+          <div class="tag-opt" data-tag="heartDisease" onclick="this.classList.toggle('sel')">Heart Disease</div>
+          <div class="tag-opt" data-tag="pregnancy" onclick="this.classList.toggle('sel')">Pregnancy</div>
+          <div class="tag-opt" data-tag="none" onclick="this.classList.toggle('sel')">None</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn btn-ghost" style="flex:1;" onclick="go('s3')">← Back</button>
+      <button class="btn btn-ink btn-lg" style="flex:3;" onclick="go('s5')">Next: Clinical Observation →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     S5 — SCREENING: CLINICAL OBS
+════════════════════════════════════ -->
+<div id="s5" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo"><div class="logo-mark logo-mark-sm">🦷</div><div class="logo-text">Dezy <em>Camp</em></div></div>
+    <div class="topbar-right"><div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;background:rgba(255,107,53,.1);color:var(--orange-2);padding:5px 11px;border-radius:20px;">P-043 · Arjun Sharma</div><button class="btn btn-sm btn-ghost" onclick="go('s4')">← Back</button></div>
+  </div>
+  <div class="pw-sm">
+    <div class="prog-steps"><span class="prog-step done">① Health History ✓</span><span class="prog-step on">② Clinical Obs.</span><span class="prog-step">③ Habits</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:67%"></div></div>
+    <div class="ph"><h1 class="ph-title">Clinical Observation</h1><p class="ph-sub">Dentist-filled — direct clinical assessment</p></div>
+
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-text" style="margin-bottom:10px;">Calculus / Tartar <span style="font-size:11px;color:var(--g400);font-weight:400;">(Supragingival)</span></div>
+      <div class="sev-bar" data-q="calculus">
+        <div class="sev-btn sev-0" data-val="0" onclick="selSev(this)">None</div>
+        <div class="sev-btn sev-1 sel" data-val="1" onclick="selSev(this)">Mild</div>
+        <div class="sev-btn sev-2" data-val="2" onclick="selSev(this)">Moderate</div>
+        <div class="sev-btn sev-3" data-val="3" onclick="selSev(this)">Severe</div>
+      </div>
+    </div>
+
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-text" style="margin-bottom:10px;">Gingival Health</div>
+      <div class="obs-grid" id="gingival-obs">
+        <div class="obs-card sel" data-obs="healthy" onclick="this.classList.toggle('sel')"><div class="oc-ico">💚</div><div class="oc-lbl">Healthy gums</div></div>
+        <div class="obs-card sel" data-obs="inflamed" onclick="this.classList.toggle('sel')"><div class="oc-ico">🔴</div><div class="oc-lbl">Inflammation</div></div>
+        <div class="obs-card sel" data-obs="bop" onclick="this.classList.toggle('sel')"><div class="oc-ico">🩸</div><div class="oc-lbl">BOP</div></div>
+        <div class="obs-card" data-obs="recession" onclick="this.classList.toggle('sel')"><div class="oc-ico">📉</div><div class="oc-lbl">Recession</div></div>
+        <div class="obs-card" data-obs="pocketing" onclick="this.classList.toggle('sel')"><div class="oc-ico">⬛</div><div class="oc-lbl">Pocketing</div></div>
+        <div class="obs-card" data-obs="other" onclick="this.classList.toggle('sel')"><div class="oc-ico">❓</div><div class="oc-lbl">Other</div></div>
+      </div>
+    </div>
+
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-text" style="margin-bottom:10px;">Caries (Decay)</div>
+      <div class="sev-bar" data-q="caries">
+        <div class="sev-btn sev-0" data-val="0" onclick="selSev(this)">None</div>
+        <div class="sev-btn sev-1" data-val="1" onclick="selSev(this)">1 tooth</div>
+        <div class="sev-btn sev-2 sel" data-val="2" onclick="selSev(this)">2–3 teeth</div>
+        <div class="sev-btn sev-3" data-val="3" onclick="selSev(this)">4+ teeth</div>
+      </div>
+    </div>
+
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-text" style="margin-bottom:10px;">Plaque Accumulation</div>
+      <div class="sev-bar" data-q="plaque">
+        <div class="sev-btn sev-0" data-val="0" onclick="selSev(this)">None</div>
+        <div class="sev-btn sev-1 sel" data-val="1" onclick="selSev(this)">Mild</div>
+        <div class="sev-btn sev-2" data-val="2" onclick="selSev(this)">Moderate</div>
+        <div class="sev-btn sev-3" data-val="3" onclick="selSev(this)">Heavy</div>
+      </div>
+    </div>
+
+    <div class="card cp" style="margin-bottom:18px;">
+      <div class="q-text" style="margin-bottom:8px;">Additional Findings</div>
+      <div class="tag-opts" id="additional-findings">
+        <div class="tag-opt" data-finding="enamelErosion" onclick="this.classList.toggle('sel')">Enamel erosion</div>
+        <div class="tag-opt sel" data-finding="toothWear" onclick="this.classList.toggle('sel')">Tooth wear / attrition</div>
+        <div class="tag-opt" data-finding="missingTeeth" onclick="this.classList.toggle('sel')">Missing teeth</div>
+        <div class="tag-opt" data-finding="staining" onclick="this.classList.toggle('sel')">Staining</div>
+        <div class="tag-opt" data-finding="crowding" onclick="this.classList.toggle('sel')">Crowding</div>
+        <div class="tag-opt" data-finding="lesions" onclick="this.classList.toggle('sel')">Oral lesions</div>
+      </div>
+    </div>
+
+    <!-- Recommended Next Steps -->
+    <div class="card cp" style="margin-bottom:18px;border:1.5px solid rgba(0,184,196,.25);background:rgba(0,184,196,.02);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+        <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--teal),#0076FF);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">✦</div>
+        <div>
+          <div class="q-text" style="margin-bottom:0;">Dentist's Recommended Next Steps</div>
+          <div style="font-size:11px;color:var(--g400);margin-top:2px;">Select all treatment pathways this patient should explore</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+
+        <!-- General Dentist -->
+        <div id="nxt-general" class="nxt-card" onclick="toggleNext('general')" style="display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1.5px solid var(--teal);background:rgba(0,184,196,.06);border-radius:var(--r-lg);cursor:pointer;transition:all .18s;">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00B8C4,#0076FF);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">🦷</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:13px;font-weight:800;color:var(--ink);">General Dentist Treatments</div>
+              <div id="nxt-general-check" style="width:18px;height:18px;border-radius:5px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800;flex-shrink:0;">✓</div>
+            </div>
+            <div style="font-size:11px;color:var(--g500);margin-top:3px;line-height:1.5;">Scaling, fillings, RCT, extractions, fluoride — routine restorative care</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;">
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(0,184,196,.1);color:var(--teal-3);">Scaling</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(0,184,196,.1);color:var(--teal-3);">Fillings</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(0,184,196,.1);color:var(--teal-3);">RCT</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(0,184,196,.1);color:var(--teal-3);">Fluoride</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aligners -->
+        <div id="nxt-aligners" class="nxt-card" onclick="toggleNext('aligners')" style="display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1.5px solid var(--g200);background:transparent;border-radius:var(--r-lg);cursor:pointer;transition:all .18s;">
+          <div style="width:36px;height:36px;border-radius:10px;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">😬</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:13px;font-weight:800;color:var(--g600);">Aligners</div>
+              <div id="nxt-aligners-check" style="width:18px;height:18px;border-radius:5px;background:var(--g200);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g400);font-weight:800;flex-shrink:0;">✓</div>
+            </div>
+            <div style="font-size:11px;color:var(--g400);margin-top:3px;line-height:1.5;">Crowding, spacing, mild–moderate malocclusion — patient is a candidate for clear aligners</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;">
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--g100);color:var(--g400);">Crowding</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--g100);color:var(--g400);">Spacing</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--g100);color:var(--g400);">Bite issues</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Implants -->
+        <div id="nxt-implants" class="nxt-card" onclick="toggleNext('implants')" style="display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1.5px solid var(--g200);background:transparent;border-radius:var(--r-lg);cursor:pointer;transition:all .18s;">
+          <div style="width:36px;height:36px;border-radius:10px;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">🔩</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:13px;font-weight:800;color:var(--g600);">Implants</div>
+              <div id="nxt-implants-check" style="width:18px;height:18px;border-radius:5px;background:var(--g200);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g400);font-weight:800;flex-shrink:0;">✓</div>
+            </div>
+            <div style="font-size:11px;color:var(--g400);margin-top:3px;line-height:1.5;">One or more missing teeth — patient is a candidate for dental implants or bridge</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;">
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--g100);color:var(--g400);">Missing teeth</span>
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--g100);color:var(--g400);">Bridge candidate</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" style="flex:1;" onclick="go('s4')">← Back</button>
+      <button class="btn btn-ink btn-lg" style="flex:3;" onclick="go('s6')">Next: Lifestyle Habits →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     S6 — SCREENING: HABITS
+════════════════════════════════════ -->
+<div id="s6" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo"><div class="logo-mark logo-mark-sm">🦷</div><div class="logo-text">Dezy <em>Camp</em></div></div>
+    <div class="topbar-right"><div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;background:rgba(255,107,53,.1);color:var(--orange-2);padding:5px 11px;border-radius:20px;">P-043 · Arjun Sharma</div><button class="btn btn-sm btn-ghost" onclick="go('s5')">← Back</button></div>
+  </div>
+  <div class="pw-sm">
+    <div class="prog-steps"><span class="prog-step done">① History ✓</span><span class="prog-step done">② Clinical ✓</span><span class="prog-step on">③ Habits</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div>
+    <div class="ph"><h1 class="ph-title">Lifestyle & Habits</h1><p class="ph-sub">Risk factor scoring — feeds the multi-dimensional breakdown</p></div>
+
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-text">1. Brushing frequency?</div>
+      <div class="opts-col" data-q="brushing">
+        <div class="opt-row" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>Twice daily — morning + night</div>
+        <div class="opt-row sel" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>Once daily</div>
+        <div class="opt-row" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>Irregular</div>
+        <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>Rarely</div>
+      </div>
+    </div>
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-text">2. Flossing habit?</div>
+      <div class="opts-col" data-q="flossing">
+        <div class="opt-row" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>Daily</div>
+        <div class="opt-row" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>Occasionally</div>
+        <div class="opt-row sel" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>Rarely</div>
+        <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>Never</div>
+      </div>
+    </div>
+    <div class="card cp" style="margin-bottom:10px;">
+      <div class="q-text">3. Tobacco / smoking?</div>
+      <div class="opts-col" data-q="tobacco">
+        <div class="opt-row sel" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>Non-user</div>
+        <div class="opt-row" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>Occasional smoker</div>
+        <div class="opt-row" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>Regular smoker</div>
+        <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>Smokeless tobacco (gutkha etc.)</div>
+      </div>
+    </div>
+    <div class="card cp" style="margin-bottom:18px;">
+      <div class="q-text">4. Daily sugar / carbonated drink intake?</div>
+      <div class="opts-col" data-q="sugar">
+        <div class="opt-row" data-val="0" onclick="solo(this)"><div class="opt-radio"></div>Rarely</div>
+        <div class="opt-row sel" data-val="1" onclick="solo(this)"><div class="opt-radio"></div>1–2x per day</div>
+        <div class="opt-row" data-val="2" onclick="solo(this)"><div class="opt-radio"></div>3–5x per day</div>
+        <div class="opt-row" data-val="3" onclick="solo(this)"><div class="opt-radio"></div>Frequent — multiple times/day</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" style="flex:1;" onclick="go('s5')">← Back</button>
+      <button class="btn btn-orange btn-xl" style="flex:3;" onclick="go('s7');animateDimScores()">✦ Generate Dental Report</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     S7 — SCORE REPORT
+════════════════════════════════════ -->
+<div id="s7" class="screen score-page-bg">
+  <div class="topbar" style="background:transparent;backdrop-filter:blur(12px);">
+    <div class="topbar-logo"><div class="logo-mark logo-mark-sm">🦷</div><div class="logo-text">Dezy <em>Camp</em></div></div>
+    <div class="topbar-right"><div style="font-size:11px;font-weight:700;color:var(--teal-3);">Infosys Wellness Day · 27 Jan 2025</div></div>
+  </div>
+  <div class="pw-sm">
+    <div class="ph"><h1 class="ph-title">Dental Health Report</h1><p class="ph-sub">Patient P-043 · Auto-generated in real-time</p></div>
+
+    <!-- Overall Score -->
+    <div class="score-hero-card" style="text-align:center;margin-bottom:14px;">
+      <div class="patient-tag">Assessment for <strong>Arjun Sharma</strong> · 34 yrs · Male · Engineering Dept</div>
+      <div class="score-ring-wrap">
+        <svg width="170" height="170" viewBox="0 0 170 170">
+          <circle id="v2-ring-track" cx="85" cy="85" r="72"/>
+          <circle id="v2-ring-fill" cx="85" cy="85" r="72"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-num" id="v2-score-num" style="color:var(--amber);">0</div>
+          <div class="score-denom">/ 10</div>
+        </div>
+      </div>
+      <div class="score-label score-fair" id="v2-score-label">Fair — Needs Attention</div>
+      <div style="font-size:12px;color:var(--g400);margin-top:10px;line-height:1.5;">Overall dental health composite · 4 dimensions · out of 10</div>
+    </div>
+
+    <!-- Multi-dimensional breakdown -->
+    <div style="margin-bottom:14px;">
+      <div class="section-lbl">📊 Score Breakdown</div>
+      <div class="dim-grid">
+        <div class="dim-card">
+          <div class="dim-top"><div><div class="dim-label">Gum Health</div><div class="dim-score" id="dim-s1" style="color:var(--amber);">0</div></div><div class="dim-icon">🦷</div></div>
+          <div class="dim-bar"><div class="dim-fill" id="dim-b1" style="width:0%;background:linear-gradient(90deg,#F79009,#FBBF24);"></div></div>
+          <div class="dim-note">Calculus, BOP, inflammation</div>
+        </div>
+        <div class="dim-card">
+          <div class="dim-top"><div><div class="dim-label">Cavity Risk</div><div class="dim-score" id="dim-s2" style="color:var(--orange);">0</div></div><div class="dim-icon">🔬</div></div>
+          <div class="dim-bar"><div class="dim-fill" id="dim-b2" style="width:0%;background:linear-gradient(90deg,#FF6B35,#FB923C);"></div></div>
+          <div class="dim-note">Caries count, sugar intake</div>
+        </div>
+        <div class="dim-card">
+          <div class="dim-top"><div><div class="dim-label">Oral Hygiene</div><div class="dim-score" id="dim-s3" style="color:var(--green);">0</div></div><div class="dim-icon">🪥</div></div>
+          <div class="dim-bar"><div class="dim-fill" id="dim-b3" style="width:0%;background:linear-gradient(90deg,#12B76A,#34D399);"></div></div>
+          <div class="dim-note">Brushing, flossing, plaque</div>
+        </div>
+        <div class="dim-card">
+          <div class="dim-top"><div><div class="dim-label">Risk Factors</div><div class="dim-score" id="dim-s4" style="color:var(--green);">0</div></div><div class="dim-icon">⚠️</div></div>
+          <div class="dim-bar"><div class="dim-fill" id="dim-b4" style="width:0%;background:linear-gradient(90deg,#12B76A,#34D399);"></div></div>
+          <div class="dim-note">Tobacco, diabetes, wear</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Issues -->
+    <div class="issues-section">
+      <div class="section-lbl">🔍 Issues Identified</div>
+      <div id="report-issues-list">
+        <!-- Populated dynamically by computeScores() + renderReport() -->
+      </div>
+
+      <!-- Treatment Pathways Flagged by Dentist -->
+      <div style="margin-top:10px;margin-bottom:2px;">
+        <div style="font-size:10px;font-weight:800;color:var(--g400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Treatment Pathways Flagged by Dentist</div>
+        <div style="display:flex;flex-direction:column;gap:7px;" id="report-pathway-flags">
+
+          <!-- General — always shown for this patient -->
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(0,184,196,.06);border:1.5px solid rgba(0,184,196,.2);border-radius:var(--r-lg);">
+            <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--teal),#0076FF);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🦷</div>
+            <div style="flex:1;">
+              <div style="font-size:12px;font-weight:800;color:var(--ink);">General Dentist Treatments Required</div>
+              <div style="font-size:11px;color:var(--g500);margin-top:1px;">Scaling · Fillings · Fluoride Application</div>
+            </div>
+            <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:10px;background:rgba(0,184,196,.12);color:var(--teal-3);">PRIORITY</span>
+          </div>
+
+          <!-- Aligners — flagged -->
+          <div id="report-flag-aligners" style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(124,92,252,.05);border:1.5px solid rgba(124,92,252,.2);border-radius:var(--r-lg);">
+            <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7C5CFC,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">😬</div>
+            <div style="flex:1;">
+              <div style="font-size:12px;font-weight:800;color:var(--ink);">Aligner Candidacy Detected</div>
+              <div style="font-size:11px;color:var(--g500);margin-top:1px;">Mild crowding observed — suitable for clear aligner therapy</div>
+            </div>
+            <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:10px;background:rgba(124,92,252,.1);color:#5C3FCA;">EXPLORE</span>
+          </div>
+
+          <!-- Implants — flagged -->
+          <div id="report-flag-implants" style="display:none;align-items:center;gap:10px;padding:10px 13px;background:rgba(249,107,53,.05);border:1.5px solid rgba(249,107,53,.2);border-radius:var(--r-lg);">
+            <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--orange),#F97316);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔩</div>
+            <div style="flex:1;">
+              <div style="font-size:12px;font-weight:800;color:var(--ink);">Implant Candidacy Detected</div>
+              <div style="font-size:11px;color:var(--g500);margin-top:1px;">Missing tooth / teeth — dental implant or bridge recommended</div>
+            </div>
+            <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:10px;background:rgba(249,107,53,.1);color:var(--orange-2);">EXPLORE</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div style="margin-bottom:14px;">
+      <div class="section-lbl">💡 Recommended Treatments</div>
+
+      <!-- General Dentist category -->
+      <div style="background:rgba(0,184,196,.04);border:1px solid rgba(0,184,196,.15);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--teal),#0076FF);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">🦷</div>
+          <div style="font-size:11px;font-weight:800;color:var(--teal-3);text-transform:uppercase;letter-spacing:.6px;">General Dentist Treatments</div>
+        </div>
+        <div class="rec-item-card" id="rec-scaling" style="margin-bottom:8px;">
+          <div class="rec-ico" style="background:rgba(247,144,9,.1);">🧹</div>
+          <div><div class="rec-title">Scaling & Root Planing</div><div class="rec-desc">Removes calculus, resolves gingival inflammation and BOP. First priority.</div><div class="rec-urgency urg-high">⏰ Within 2–4 weeks · FREE with voucher</div></div>
+        </div>
+        <div class="rec-item-card" id="rec-fillings" style="margin-bottom:8px;">
+          <div class="rec-ico" style="background:rgba(0,184,196,.1);">🔧</div>
+          <div><div class="rec-title">Composite Resin Filling (2 teeth)</div><div class="rec-desc">Halt early-stage decay before pulp involvement. Single-visit procedure.</div><div class="rec-urgency urg-med">⏰ Within 4–6 weeks</div></div>
+        </div>
+        <div class="rec-item-card">
+          <div class="rec-ico" style="background:rgba(18,183,106,.1);">💧</div>
+          <div><div class="rec-title">Fluoride Application + OHI</div><div class="rec-desc">Protective fluoride + personalised brushing and flossing coaching.</div><div class="rec-urgency urg-low">✓ Same appointment as scaling</div></div>
+        </div>
+      </div>
+
+      <!-- Aligners category -->
+      <div id="rec-aligners" style="background:rgba(124,92,252,.04);border:1px solid rgba(124,92,252,.15);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#7C5CFC,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">😬</div>
+          <div style="font-size:11px;font-weight:800;color:#5C3FCA;text-transform:uppercase;letter-spacing:.6px;">Aligners</div>
+        </div>
+        <div class="rec-item-card" style="margin-bottom:8px;">
+          <div class="rec-ico" style="background:rgba(124,92,252,.1);">📐</div>
+          <div><div class="rec-title">Clear Aligner Consultation</div><div class="rec-desc">Mild crowding observed. Patient is a good candidate for a 6–12 month aligner programme. Full treatment plan requires clinical photos and digital scan.</div><div class="rec-urgency" style="color:#5C3FCA;">✦ Schedule a free consultation at Dezy</div></div>
+        </div>
+        <div class="rec-item-card">
+          <div class="rec-ico" style="background:rgba(124,92,252,.07);">📸</div>
+          <div><div class="rec-title">Digital Scan & Treatment Plan</div><div class="rec-desc">iTero or equivalent intraoral scan to generate precise aligner movement simulation and cost estimate.</div><div class="rec-urgency urg-low">✓ Complimentary at Dezy — 20 minutes</div></div>
+        </div>
+      </div>
+
+      <!-- Implants category — hidden by default, shown if flagged -->
+      <div id="rec-implants" style="display:none;background:rgba(249,107,53,.04);border:1px solid rgba(249,107,53,.15);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--orange),#F97316);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">🔩</div>
+          <div style="font-size:11px;font-weight:800;color:var(--orange-2);text-transform:uppercase;letter-spacing:.6px;">Implants</div>
+        </div>
+        <div class="rec-item-card" style="margin-bottom:8px;">
+          <div class="rec-ico" style="background:rgba(249,107,53,.1);">🔩</div>
+          <div><div class="rec-title">Dental Implant Consultation</div><div class="rec-desc">One or more missing teeth detected. Implant is the gold standard long-term replacement. Requires bone density assessment via OPG X-ray.</div><div class="rec-urgency urg-high">⏰ Consult within 4 weeks to assess bone health</div></div>
+        </div>
+        <div class="rec-item-card">
+          <div class="rec-ico" style="background:rgba(249,107,53,.07);">🩻</div>
+          <div><div class="rec-title">OPG X-Ray + Bone Assessment</div><div class="rec-desc">Panoramic X-ray to evaluate bone volume and determine implant candidacy. Takes 5 minutes at clinic.</div><div class="rec-urgency urg-med">⏰ Required before implant planning</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PDF Preview strip -->
+    <div class="pdf-preview-strip">
+      <div class="pdf-thumb">📄</div>
+      <div class="pdf-meta">
+        <div class="pdf-title">Dezy_DentalReport_ArjunSharma_P043.pdf</div>
+        <div class="pdf-sub">Branded · Personalised · Includes score, issues, recommendations · 2 pages</div>
+      </div>
+      <button class="btn btn-ghost btn-sm">Preview</button>
+    </div>
+
+    <button class="btn btn-teal btn-full btn-xl" onclick="go('s8');initTY()">Share Report & Voucher via WhatsApp →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     S8 — THANK YOU + VOUCHER
+════════════════════════════════════ -->
+<div id="s8" class="screen" style="background:linear-gradient(180deg,#E8F9F0 0%,var(--bg) 35%);">
+  <div class="topbar" style="background:transparent;backdrop-filter:blur(12px);">
+    <div class="topbar-logo"><div class="logo-mark logo-mark-sm">🦷</div><div class="logo-text">Dezy <em>Camp</em></div></div>
+    <div class="topbar-right"><button class="btn btn-sm btn-ink" onclick="go('s3')">→ Next Patient</button></div>
+  </div>
+
+  <div class="pw-sm" style="padding-top:24px;">
+    <!-- Check + heading -->
+    <div id="ty-check" class="ty-check">✓</div>
+    <div class="ty-title">Report Sent!</div>
+    <div class="ty-sub">Thank you for attending Dezy Dental Days at Infosys.<br>Your personalised report has been sent to your WhatsApp via Gallabox.</div>
+
+    <!-- VOUCHER -->
+    <div class="voucher-wrap">
+      <div class="v-glow-1"></div>
+      <div class="v-glow-2"></div>
+      <div class="v-shine"></div>
+
+      <div class="v-brand-row">
+        <div class="v-brand-mark">🦷</div>
+        <div>
+          <div class="v-brand-name">DEZY DENTAL NETWORK</div>
+          <div class="v-brand-tagline">Design-First Dental Care · Bangalore, Hyderabad, Pune</div>
+        </div>
+      </div>
+
+      <div class="v-body">
+        <div>
+          <div class="v-offer-label">Complimentary Treatment</div>
+          <div class="v-offer-title">Free <em>Scaling</em><br>at any Dezy clinic</div>
+          <div class="v-offer-sub">Professional tartar removal · Worth ₹1,200</div>
+        </div>
+        <div class="v-value">
+          <div class="v-value-num">₹0</div>
+          <div class="v-value-orig">₹1,200</div>
+          <div class="v-value-label">you pay</div>
+        </div>
+      </div>
+
+      <hr class="v-divider">
+
+      <div class="v-code-row">
+        <div>
+          <div class="v-code-lbl">Voucher Code</div>
+          <div class="v-code-val" id="v2-voucher-code">DEZY-SC-8472</div>
+        </div>
+        <button class="v-copy" onclick="copyV2()">Copy Code</button>
+      </div>
+
+      <div class="v-footer">
+        <div class="v-expiry">Valid until <strong>11 Feb 2025</strong> (15 days)</div>
+        <div class="v-clinics">Whitefield · Indiranagar<br>Koramangala · HSR</div>
+      </div>
+    </div>
+
+    <!-- Share row -->
+    <div class="share-stack">
+      <button class="btn btn-green btn-full btn-lg" style="font-size:14px;justify-content:center;">
+        💬 Sent via Gallabox WhatsApp <span style="opacity:.6;font-size:11px;margin-left:6px;">· Auto-triggered</span>
+      </button>
+      <button class="btn btn-ghost btn-full">📱 Resend SMS</button>
+      <button class="btn btn-ghost btn-full">📧 Send Email Backup</button>
+    </div>
+
+    <!-- BOOKING — Own system -->
+    <div class="booking-panel">
+      <div class="bp-label">Book Clinic Visit · Dezy Internal System</div>
+      <div class="bp-title">Confirm Appointment</div>
+      <div class="bp-sub">Redeem free scaling voucher. Select preferred Dezy clinic.</div>
+      <select class="bp-clinic-select">
+        <option>Dezy Whitefield — 2.1 km · Mon–Sat 9AM–7PM</option>
+        <option>Dezy Indiranagar — 8.4 km · Mon–Sat 9AM–7PM</option>
+        <option>Dezy Koramangala — 11 km · Mon–Sat 9AM–7PM</option>
+        <option>Dezy HSR Layout — 13 km · Mon–Sun 9AM–6PM</option>
+      </select>
+      <button class="btn btn-full btn-lg" style="background:#fff;color:var(--orange-2);font-weight:800;font-size:14px;justify-content:center;">
+        🗓 Book Appointment on Dezy System →
+      </button>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:var(--g400);padding:8px 0;">Single use · Scaling only · Cannot be combined with other offers</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     S9 — ADMIN DASHBOARD
+════════════════════════════════════ -->
+<div id="s9" class="screen-flex">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--teal),#0076FF);display:flex;align-items:center;justify-content:center;font-size:15px;">🦷</div>
+      <div class="sb-logo-text">Dezy <em>Camp</em></div>
+    </div>
+
+    <div class="sb-camp-card">
+      <div class="sb-camp-lbl">Active Camp</div>
+      <div class="sb-camp-id">DEZY-BLR-0127</div>
+      <div class="sb-camp-partner">Infosys · 27 Jan 2025</div>
+      <div class="sb-live-dot">Live</div>
+    </div>
+
+    <div class="sb-nav">
+      <div class="sb-section">Analytics</div>
+      <div class="sb-item on" onclick="sw('tp-overview',this)"><span class="si">📊</span> Overview</div>
+      <div class="sb-item" onclick="sw('tp-patients',this)"><span class="si">👤</span> Patients <span class="sb-badge">87</span></div>
+
+      <div class="sb-section">Operations</div>
+      <div class="sb-item" onclick="sw('tp-voucher',this)"><span class="si">🎟</span> Voucher Lookup</div>
+      <div class="sb-item" onclick="sw('tp-scoring',this)"><span class="si">⚙️</span> Scoring Engine</div>
+
+      <div class="sb-section">Integrations</div>
+      <div class="sb-item" onclick="sw('tp-gallabox',this)"><span class="si">💬</span> Gallabox</div>
+      <div class="sb-item" onclick="sw('tp-crm',this)"><span class="si">🔗</span> CRM Export</div>
+
+      <div class="sb-section">Strategy</div>
+      <div class="sb-item" onclick="sw('tp-metrics',this)"><span class="si">📈</span> Key Metrics</div>
+    </div>
+
+    <div class="sb-user">
+      <div class="sb-user-row">
+        <div class="sb-avatar">SB</div>
+        <div>
+          <div class="sb-user-name">Sujith B.</div>
+          <div class="sb-user-role">Sr. Manager · Expansion & Growth</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div class="at-title" id="at-title">Campaign Overview</div>
+        <div class="at-sub">Infosys Wellness Day · DEZY-BLR-0127 · Live since 9:00 AM</div>
+      </div>
+      <div class="at-actions">
+        <button class="btn btn-sm btn-ghost">⬇ Export CSV</button>
+        <button class="btn btn-sm btn-ink">↺ Refresh</button>
+      </div>
+    </div>
+
+    <div class="ac">
+
+      <!-- ── OVERVIEW ── -->
+      <div id="tp-overview" class="tp on">
+        <div class="stats-row">
+          <div class="stat-card"><div class="sc-ico" style="background:rgba(0,184,196,.1);">👥</div><div class="sc-val">87</div><div class="sc-lbl">Total Screened</div><div class="sc-delta up">↑ 42 since 11am</div></div>
+          <div class="stat-card"><div class="sc-ico" style="background:rgba(247,144,9,.1);">⭐</div><div class="sc-val">6</div><div class="sc-lbl">Avg Score</div><div class="sc-delta mid">Fair · 5–7 band</div></div>
+          <div class="stat-card"><div class="sc-ico" style="background:rgba(18,183,106,.1);">📱</div><div class="sc-val">79</div><div class="sc-lbl">Reports Sent</div><div class="sc-delta up">↑ 91% delivery</div></div>
+          <div class="stat-card"><div class="sc-ico" style="background:rgba(255,107,53,.1);">🗓</div><div class="sc-val">22</div><div class="sc-lbl">Bookings</div><div class="sc-delta up">↑ 28% conv.</div></div>
+        </div>
+
+        <!-- Revenue attribution -->
+        <div class="rev-card">
+          <div class="rev-icon">💰</div>
+          <div class="rev-content">
+            <div class="rev-label">Campaign Revenue Attribution · Camp DEZY-BLR-0127</div>
+            <div class="rev-val">₹18,400</div>
+            <div class="rev-sub">Realised revenue from 9 clinic conversions · 60-day attribution window</div>
+            <div class="rev-breakdown">
+              <div class="rev-item"><strong>9</strong> Paid visits</div>
+              <div class="rev-item"><strong>₹2,044</strong> Avg. per patient</div>
+              <div class="rev-item"><strong>₹480</strong> Est. camp cost</div>
+              <div class="rev-item"><strong>38×</strong> ROI</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <!-- Funnel -->
+          <div class="chart-card">
+            <div class="chart-title">Conversion Funnel <small>Camp → Clinic</small></div>
+            <div class="funnel-stage">
+              <div class="fs-meta"><span class="fs-label">🔵 Screened</span><span class="fs-num">87 <span class="fs-pct">100%</span></span></div>
+              <div class="fs-bar-bg"><div class="fs-fill" style="width:100%;background:var(--teal);">87</div></div>
+            </div>
+            <div class="funnel-stage">
+              <div class="fs-meta"><span class="fs-label">📱 Reports Sent (Gallabox)</span><span class="fs-num">79 <span class="fs-pct">91%</span></span></div>
+              <div class="fs-bar-bg"><div class="fs-fill" style="width:91%;background:#0EA5E9;">79</div></div>
+              <div class="fs-cta">💬 D+0 template: dezy_camp_report_v2</div>
+            </div>
+            <div class="funnel-stage">
+              <div class="fs-meta"><span class="fs-label">👆 Link Opened</span><span class="fs-num">61 <span class="fs-pct">70%</span></span></div>
+              <div class="fs-bar-bg"><div class="fs-fill" style="width:70%;background:#6366F1;">61</div></div>
+            </div>
+            <div class="funnel-stage">
+              <div class="fs-meta"><span class="fs-label">🗓 Bookings (Dezy System)</span><span class="fs-num">22 <span class="fs-pct">25%</span></span></div>
+              <div class="fs-bar-bg"><div class="fs-fill" style="width:25%;background:var(--orange);">22</div></div>
+              <div class="fs-cta">🔑 Source tag: camp_DEZY-BLR-0127</div>
+            </div>
+            <div class="funnel-stage">
+              <div class="fs-meta"><span class="fs-label">✅ Clinic Conversion</span><span class="fs-num">9 <span class="fs-pct">10%</span></span></div>
+              <div class="fs-bar-bg"><div class="fs-fill" style="width:10%;background:var(--green);">9</div></div>
+            </div>
+          </div>
+
+          <!-- Score distribution + top issues -->
+          <div class="chart-card">
+            <div class="chart-title">Dental Score Distribution</div>
+            <div class="score-dist" style="margin-bottom:14px;">
+              <div class="sd-row"><div class="sd-label" style="color:var(--red-2);">0–2</div><div class="sd-bg"><div class="sd-fill" style="width:3%;background:var(--red);"></div></div><div class="sd-n">3</div></div>
+              <div class="sd-row"><div class="sd-label" style="color:var(--orange-2);">2–4</div><div class="sd-bg"><div class="sd-fill" style="width:9%;background:var(--orange);"></div></div><div class="sd-n">8</div></div>
+              <div class="sd-row"><div class="sd-label" style="color:var(--amber-2);">4–6</div><div class="sd-bg"><div class="sd-fill" style="width:26%;background:var(--amber);"></div></div><div class="sd-n">23</div></div>
+              <div class="sd-row"><div class="sd-label" style="color:var(--amber-2);">6–8</div><div class="sd-bg"><div class="sd-fill" style="width:43%;background:#FBBF24;"></div></div><div class="sd-n">37</div></div>
+              <div class="sd-row"><div class="sd-label" style="color:var(--green-2);">8–10</div><div class="sd-bg"><div class="sd-fill" style="width:18%;background:var(--green);"></div></div><div class="sd-n">16</div></div>
+            </div>
+            <div style="padding-top:12px;border-top:1px solid var(--g100);">
+              <div style="font-size:11px;font-weight:800;color:var(--ink);margin-bottom:8px;">Top Issues Across Camp</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--g500);">Calculus / Tartar</span><span class="badge badge-amber">74 pts · 85%</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--g500);">Gingival Inflammation</span><span class="badge badge-amber">61 pts · 70%</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--g500);">Dental Caries</span><span class="badge badge-red">38 pts · 44%</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--g500);">Sensitivity</span><span class="badge badge-teal">42 pts · 48%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HR Aggregate -->
+        <div style="background:linear-gradient(145deg,var(--ink),var(--ink-2));border-radius:var(--r-xl);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,.05);">
+          <div>
+            <div style="font-size:10px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px;">HR Aggregate Report · De-identified</div>
+            <div style="font-family:var(--f-head);font-size:18px;color:#fff;margin-bottom:3px;">Population insights for Infosys HR</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);">No PII included · 87 employees · Score distribution, top issues, department breakdown</div>
+          </div>
+          <button class="btn btn-teal" style="flex-shrink:0;margin-left:20px;">Download PDF</button>
+        </div>
+      </div>
+
+      <!-- ── PATIENTS ── -->
+      <div id="tp-patients" class="tp">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div><div style="font-size:16px;font-weight:800;color:var(--ink);">Patient Records</div><div style="font-size:12px;color:var(--g400);">87 screened · DEZY-BLR-0127</div></div>
+          <div style="display:flex;gap:8px;">
+            <input class="fi" type="text" placeholder="Search..." style="width:180px;padding:8px 12px;">
+            <select class="fs" style="width:130px;padding:8px 12px;"><option>All Status</option><option>Screened</option><option>Booked</option><option>Converted</option></select>
+            <button class="btn btn-sm btn-ghost">⬇ Export</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr>
+              <th>ID</th><th>Name</th><th>Age/Gender</th><th>Overall</th><th>Gum · Cavity · Hygiene · Risk</th><th>Issues</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td class="td-pid">P-043</td>
+                <td class="td-name">Arjun Sharma</td>
+                <td style="font-size:12px;color:var(--g400);">34·M</td>
+                <td class="td-score score-f">6</td>
+                <td><div class="dim-pills"><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">G·6</span><span class="dim-pill" style="background:rgba(255,107,53,.1);color:var(--orange-2);">C·5</span><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">H·8</span><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">R·8</span></div></td>
+                <td><span class="badge badge-amber">Calculus</span> <span class="badge badge-orange">Caries</span></td>
+                <td><span class="chip chip-sent">Report Sent</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:10px;">View</button></td>
+              </tr>
+              <tr>
+                <td class="td-pid">P-042</td>
+                <td class="td-name">Priya Menon</td>
+                <td style="font-size:12px;color:var(--g400);">28·F</td>
+                <td class="td-score score-g">8</td>
+                <td><div class="dim-pills"><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">G·8</span><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">C·9</span><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">H·8</span><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">R·9</span></div></td>
+                <td><span class="badge badge-teal">Mild Plaque</span></td>
+                <td><span class="chip chip-booked">Booked</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:10px;">View</button></td>
+              </tr>
+              <tr>
+                <td class="td-pid">P-041</td>
+                <td class="td-name">Rahul Nair</td>
+                <td style="font-size:12px;color:var(--g400);">45·M</td>
+                <td class="td-score score-p">4</td>
+                <td><div class="dim-pills"><span class="dim-pill" style="background:rgba(240,68,56,.1);color:var(--red-2);">G·3</span><span class="dim-pill" style="background:rgba(240,68,56,.1);color:var(--red-2);">C·4</span><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">H·5</span><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">R·4</span></div></td>
+                <td><span class="badge badge-red">Caries</span> <span class="badge badge-red">Gingivitis</span></td>
+                <td><span class="chip chip-converted">Converted</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:10px;">View</button></td>
+              </tr>
+              <tr>
+                <td class="td-pid">P-040</td>
+                <td class="td-name">Kavitha Reddy</td>
+                <td style="font-size:12px;color:var(--g400);">31·F</td>
+                <td class="td-score score-f">7</td>
+                <td><div class="dim-pills"><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">G·7</span><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">C·8</span><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">H·7</span><span class="dim-pill" style="background:rgba(18,183,106,.1);color:var(--green-2);">R·9</span></div></td>
+                <td><span class="badge badge-amber">Sensitivity</span></td>
+                <td><span class="chip chip-screened">Screened</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:10px;">View</button></td>
+              </tr>
+              <tr>
+                <td class="td-pid">P-039</td>
+                <td class="td-name">Deepak Verma</td>
+                <td style="font-size:12px;color:var(--g400);">52·M</td>
+                <td class="td-score score-p">5</td>
+                <td><div class="dim-pills"><span class="dim-pill" style="background:rgba(240,68,56,.1);color:var(--red-2);">G·4</span><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">C·5</span><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">H·5</span><span class="dim-pill" style="background:rgba(247,144,9,.1);color:var(--amber-2);">R·4</span></div></td>
+                <td><span class="badge badge-red">Calculus</span> <span class="badge badge-amber">BOP</span></td>
+                <td><span class="chip chip-booked">Booked</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:10px;">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── VOUCHER LOOKUP ── -->
+      <div id="tp-voucher" class="tp">
+        <div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;">Voucher Lookup</div>
+        <div style="font-size:12px;color:var(--g400);margin-bottom:18px;">Clinic staff: enter code to verify and redeem. Manual process until system integration is live.</div>
+
+        <div class="lookup-card">
+          <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:14px;">🔍 Verify Voucher Code</div>
+          <div class="lookup-input-row">
+            <input class="fi" id="vcode-input" type="text" placeholder="DEZY-SC-XXXX" maxlength="12" style="font-family:var(--f-mono);font-size:16px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;">
+            <button class="btn btn-ink" onclick="lookupVoucher()">Check Code</button>
+          </div>
+
+          <div id="lookup-result" class="lookup-result">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Voucher design principles callout -->
+        <div class="card cp">
+          <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;">📋 Manual Redemption SOP (Until CRM Integration)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="background:var(--sky);border:1px solid rgba(0,184,196,.2);border-radius:var(--r-lg);padding:12px;">
+              <div style="font-size:11px;font-weight:800;color:var(--teal-3);margin-bottom:5px;">At Reception</div>
+              <div style="font-size:12px;color:var(--g600);line-height:1.5;">Patient shows code → Receptionist enters here → System confirms validity → Mark as redeemed → Proceed with scaling</div>
+            </div>
+            <div style="background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.15);border-radius:var(--r-lg);padding:12px;">
+              <div style="font-size:11px;font-weight:800;color:var(--orange-2);margin-bottom:5px;">Post-Redeem</div>
+              <div style="font-size:12px;color:var(--g600);line-height:1.5;">Attribution is logged in this system → Camp → Patient → Clinic → Revenue tracked in CRM export within 24h</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Voucher stats -->
+        <div class="card cp" style="margin-top:14px;">
+          <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;">Voucher Stats · DEZY-BLR-0127</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <div style="text-align:center;"><div style="font-family:var(--f-head);font-size:24px;color:var(--teal);">87</div><div style="font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;">Issued</div></div>
+            <div style="text-align:center;"><div style="font-family:var(--f-head);font-size:24px;color:var(--amber);">21</div><div style="font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;">Redeemed</div></div>
+            <div style="text-align:center;"><div style="font-family:var(--f-head);font-size:24px;color:var(--orange);">66</div><div style="font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;">Pending</div></div>
+            <div style="text-align:center;"><div style="font-family:var(--f-head);font-size:24px;color:var(--green);">24%</div><div style="font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;">Redemption</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SCORING ENGINE ── -->
+      <div id="tp-scoring" class="tp">
+        <div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;">Scoring Engine</div>
+        <div style="font-size:12px;color:var(--g400);margin-bottom:18px;">Simplified to 3 inputs only. Everything else is collected as clinical notes but does not affect the score.</div>
+
+        <!-- Scores vs notes -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:rgba(18,183,106,.05);border:1.5px solid rgba(18,183,106,.2);border-radius:var(--r-lg);padding:14px;">
+            <div style="font-size:10px;font-weight:800;color:var(--green-2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;">✅ Feeds the Score (3 inputs)</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><div style="font-size:12px;font-weight:700;color:var(--ink);">Calculus severity <span style="font-weight:400;color:var(--g400);">— most visible sign, drives scaling</span></div></div>
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><div style="font-size:12px;font-weight:700;color:var(--ink);">Caries count <span style="font-weight:400;color:var(--g400);">— directly maps to filling need</span></div></div>
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><div style="font-size:12px;font-weight:700;color:var(--ink);">Brushing frequency <span style="font-weight:400;color:var(--g400);">— strongest habit predictor</span></div></div>
+            </div>
+          </div>
+          <div style="background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--r-lg);padding:14px;">
+            <div style="font-size:10px;font-weight:800;color:var(--g400);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;">📋 Clinical Notes Only (no score impact)</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="font-size:11px;color:var(--g500);">Gingival inflammation / BOP</div>
+              <div style="font-size:11px;color:var(--g500);">Plaque accumulation</div>
+              <div style="font-size:11px;color:var(--g500);">Flossing habit</div>
+              <div style="font-size:11px;color:var(--g500);">Sugar / diet intake</div>
+              <div style="font-size:11px;color:var(--g500);">Sensitivity · Recession · Pocketing</div>
+              <div style="font-size:11px;color:var(--g500);">Tobacco · Systemic conditions</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formula -->
+        <div class="card cp" style="margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;">Formula</div>
+          <div style="background:#0B1929;border-radius:var(--r-lg);padding:18px;font-family:var(--f-mono);font-size:12px;color:#94D9FF;line-height:2.2;">
+            <div style="color:rgba(255,255,255,.3);">// Start at 10. Subtract deductions. Floor at 1.</div>
+            <div><span style="color:#F97316;">score</span> = <span style="color:#86EFAC;">10</span> − <span style="color:#FFB86C;">calculus_ded</span> − <span style="color:#FFB86C;">caries_ded</span> − <span style="color:#FFB86C;">brushing_ded</span></div>
+            <div><span style="color:#F97316;">score</span> = <span style="color:#F97316;">max</span>(<span style="color:#F97316;">score</span>, <span style="color:#86EFAC;">1</span>)  <span style="color:rgba(255,255,255,.25);">// no patient scores a zero</span></div>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--g500);line-height:1.6;">Max deduction: <strong style="color:var(--ink);">9 pts</strong> (severe calculus −6, 4+ caries −4, rarely brushes −2, floored at 1). Perfect score: <strong style="color:var(--ink);">10</strong>.</div>
+        </div>
+
+        <!-- 3 deduction tables -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+          <div class="card" style="overflow:hidden;">
+            <div style="padding:11px 14px;border-bottom:1px solid var(--g150);display:flex;align-items:center;gap:8px;background:var(--g50);">
+              <div style="width:28px;height:28px;border-radius:8px;background:rgba(247,144,9,.12);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🦷</div>
+              <div><div style="font-size:12px;font-weight:800;color:var(--ink);">Calculus</div><div style="font-size:10px;color:var(--g400);">Max: −6</div></div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tbody>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">None</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--green-2);">−0</td></tr>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">Mild</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--amber-2);">−2</td></tr>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">Moderate</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--orange-2);">−4</td></tr>
+                <tr><td style="padding:9px 14px;font-size:12px;color:var(--g600);">Severe</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--red-2);">−6</td></tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 12px;background:var(--sky);border-top:1px solid var(--g150);font-size:10px;color:var(--teal-3);font-weight:600;">Drives scaling voucher</div>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <div style="padding:11px 14px;border-bottom:1px solid var(--g150);display:flex;align-items:center;gap:8px;background:var(--g50);">
+              <div style="width:28px;height:28px;border-radius:8px;background:rgba(255,107,53,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔬</div>
+              <div><div style="font-size:12px;font-weight:800;color:var(--ink);">Caries</div><div style="font-size:10px;color:var(--g400);">Max: −4</div></div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tbody>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">None</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--green-2);">−0</td></tr>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">1 tooth</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--amber-2);">−1</td></tr>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">2–3 teeth</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--orange-2);">−2</td></tr>
+                <tr><td style="padding:9px 14px;font-size:12px;color:var(--g600);">4+ teeth</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--red-2);">−4</td></tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 12px;background:var(--sky);border-top:1px solid var(--g150);font-size:10px;color:var(--teal-3);font-weight:600;">Drives filling recommendation</div>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <div style="padding:11px 14px;border-bottom:1px solid var(--g150);display:flex;align-items:center;gap:8px;background:var(--g50);">
+              <div style="width:28px;height:28px;border-radius:8px;background:rgba(18,183,106,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🪥</div>
+              <div><div style="font-size:12px;font-weight:800;color:var(--ink);">Brushing</div><div style="font-size:10px;color:var(--g400);">Max: −2</div></div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tbody>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">Twice daily</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--green-2);">−0</td></tr>
+                <tr style="border-bottom:1px solid var(--g100);"><td style="padding:9px 14px;font-size:12px;color:var(--g600);">Once daily</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--amber-2);">−1</td></tr>
+                <tr><td style="padding:9px 14px;font-size:12px;color:var(--g600);">Irregular / Rarely</td><td style="padding:9px 14px;text-align:right;font-family:var(--f-mono);font-size:14px;font-weight:800;color:var(--red-2);">−2</td></tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 12px;background:var(--sky);border-top:1px solid var(--g150);font-size:10px;color:var(--teal-3);font-weight:600;">Drives OHI coaching</div>
+          </div>
+        </div>
+
+        <!-- Score Bands -->
+        <div class="card cp" style="margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;">Score Bands</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:grid;grid-template-columns:52px 1fr 80px 1fr;align-items:center;font-size:9px;font-weight:800;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;padding:0 10px 6px;">
+              <div>Score</div><div>Label</div><div>Ring</div><div>Patient message</div>
+            </div>
+            <div style="display:grid;grid-template-columns:52px 1fr 80px 1fr;align-items:center;background:rgba(18,183,106,.06);border-radius:10px;padding:9px 10px;">
+              <div style="font-family:var(--f-head);font-size:18px;color:var(--green-2);">9–10</div>
+              <div style="font-size:12px;font-weight:800;color:var(--green-2);">Excellent</div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><span style="font-size:10px;color:var(--g500);">Green</span></div>
+              <div style="font-size:11px;color:var(--g500);">"Great dental health. Keep it up!"</div>
+            </div>
+            <div style="display:grid;grid-template-columns:52px 1fr 80px 1fr;align-items:center;background:rgba(18,183,106,.04);border-radius:10px;padding:9px 10px;">
+              <div style="font-family:var(--f-head);font-size:18px;color:var(--green-2);">7–8</div>
+              <div style="font-size:12px;font-weight:800;color:var(--green-2);">Good</div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:50%;background:#34D399;flex-shrink:0;"></div><span style="font-size:10px;color:var(--g500);">Green</span></div>
+              <div style="font-size:11px;color:var(--g500);">"Good overall. Minor areas to address."</div>
+            </div>
+            <div style="display:grid;grid-template-columns:52px 1fr 80px 1fr;align-items:center;background:rgba(247,144,9,.06);border-radius:10px;padding:9px 10px;">
+              <div style="font-family:var(--f-head);font-size:18px;color:var(--amber-2);">5–6</div>
+              <div style="font-size:12px;font-weight:800;color:var(--amber-2);">Fair</div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:50%;background:var(--amber);flex-shrink:0;"></div><span style="font-size:10px;color:var(--g500);">Amber</span></div>
+              <div style="font-size:11px;color:var(--g500);">"Needs attention. Visit within 2–4 weeks."</div>
+            </div>
+            <div style="display:grid;grid-template-columns:52px 1fr 80px 1fr;align-items:center;background:rgba(255,107,53,.06);border-radius:10px;padding:9px 10px;">
+              <div style="font-family:var(--f-head);font-size:18px;color:var(--orange-2);">3–4</div>
+              <div style="font-size:12px;font-weight:800;color:var(--orange-2);">Poor</div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:50%;background:var(--orange);flex-shrink:0;"></div><span style="font-size:10px;color:var(--g500);">Orange</span></div>
+              <div style="font-size:11px;color:var(--g500);">"Multiple issues. Book within 1–2 weeks."</div>
+            </div>
+            <div style="display:grid;grid-template-columns:52px 1fr 80px 1fr;align-items:center;background:rgba(240,68,56,.06);border-radius:10px;padding:9px 10px;">
+              <div style="font-family:var(--f-head);font-size:18px;color:var(--red-2);">1–2</div>
+              <div style="font-size:12px;font-weight:800;color:var(--red-2);">Critical</div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;border-radius:50%;background:var(--red);flex-shrink:0;"></div><span style="font-size:10px;color:var(--g500);">Red</span></div>
+              <div style="font-size:11px;color:var(--g500);">"Urgent care needed. Call us today."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Worked example -->
+        <div class="card cp" style="margin-bottom:14px;border:1.5px solid rgba(0,184,196,.2);background:rgba(0,184,196,.02);">
+          <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:14px;">📝 Worked Example — Arjun Sharma (P-043)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+            <div style="background:var(--g50);border-radius:var(--r-lg);padding:14px;text-align:center;">
+              <div style="font-size:10px;font-weight:800;color:var(--g400);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;">🦷 Calculus</div>
+              <div style="font-size:12px;color:var(--g500);margin-bottom:4px;">Mild</div>
+              <div style="font-family:var(--f-mono);font-size:20px;font-weight:800;color:var(--amber-2);">−2</div>
+            </div>
+            <div style="background:var(--g50);border-radius:var(--r-lg);padding:14px;text-align:center;">
+              <div style="font-size:10px;font-weight:800;color:var(--g400);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;">🔬 Caries</div>
+              <div style="font-size:12px;color:var(--g500);margin-bottom:4px;">2 teeth</div>
+              <div style="font-family:var(--f-mono);font-size:20px;font-weight:800;color:var(--orange-2);">−2</div>
+            </div>
+            <div style="background:var(--g50);border-radius:var(--r-lg);padding:14px;text-align:center;">
+              <div style="font-size:10px;font-weight:800;color:var(--g400);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;">🪥 Brushing</div>
+              <div style="font-size:12px;color:var(--g500);margin-bottom:4px;">Once daily</div>
+              <div style="font-family:var(--f-mono);font-size:20px;font-weight:800;color:var(--amber-2);">−1</div>
+            </div>
+          </div>
+          <div style="background:var(--ink);border-radius:var(--r-lg);padding:14px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:13px;color:rgba(255,255,255,.55);font-family:var(--f-mono);">10 − 2 − 2 − 1 = <span style="color:#fff;font-weight:800;">5</span></div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-family:var(--f-head);font-size:36px;color:var(--amber);">5</div>
+              <div>
+                <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.6);">/ 10</div>
+                <div style="font-size:11px;color:var(--amber);font-weight:700;">Fair — Needs Attention</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(18,183,106,.06);border:1.5px solid rgba(18,183,106,.2);border-radius:var(--r-lg);padding:14px;font-size:12px;color:var(--green-2);font-weight:600;">
+          ✅ <strong>Why these 3?</strong>&nbsp; Calculus is the #1 observable finding in a 5-minute camp screening and directly drives the scaling voucher. Caries count maps to fillings. Brushing frequency is the strongest single predictor of future trajectory. Everything else informs the dentist — not the number.
+        </div>
+      </div>
+
+      <!-- ── GALLABOX ── -->
+      <div id="tp-gallabox" class="tp">
+        <div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;">Gallabox Integration</div>
+        <div style="font-size:12px;color:var(--g400);margin-bottom:18px;">WhatsApp automation templates — formatted for Gallabox template approval.</div>
+
+        <div class="int-card">
+          <div class="int-head">
+            <div class="int-logo-row">
+              <div class="int-logo-box" style="background:#25D366;">💬</div>
+              <div><div class="int-name">Gallabox WhatsApp</div><div class="int-desc">Trigger: POST /api/v2/request · Channel: WhatsApp Business</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-size:11px;font-weight:700;color:var(--green-2);display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);"></span>Connected</div>
+              <button class="btn btn-sm btn-ghost">Test Send</button>
+            </div>
+          </div>
+          <div class="int-body">
+            <div class="template-card">
+              <div class="tc-head"><span class="tc-title">T1 · dezy_camp_report_v2</span><span class="badge badge-green">✓ Approved · Trigger: D+0</span></div>
+              <div class="tc-body">Hi <span class="tc-var">{{1}}</span> 👋
+
+Your *Dezy Dental Health Report* from <span class="tc-var">{{2}}</span> is ready!
+
+🦷 *Score: <span class="tc-var">{{3}}</span>/10* — <span class="tc-var">{{4}}</span>
+⚠️ Key findings: <span class="tc-var">{{5}}</span>
+
+📊 Breakdown:
+  Gum Health: <span class="tc-var">{{6}}</span>/10
+  Cavity Risk: <span class="tc-var">{{7}}</span>/10
+  Hygiene: <span class="tc-var">{{8}}</span>/10
+
+📄 Full report → <span class="tc-var">{{9}}</span>
+
+🎁 *FREE Scaling Voucher*: *<span class="tc-var">{{10}}</span>*
+Valid: <span class="tc-var">{{11}}</span> (Worth ₹1,200)
+
+🗓 Book at Dezy <span class="tc-var">{{12}}</span> → <span class="tc-var">{{13}}</span></div>
+              <div class="tc-note">💡 Variable map: 1=first_name, 2=partner_name, 3=overall_score, 4=score_label, 5=top_issue, 6=gum_score, 7=cavity_score, 8=hygiene_score, 9=report_link, 10=voucher_code, 11=expiry_date, 12=clinic_name, 13=booking_link</div>
+            </div>
+
+            <div class="template-card">
+              <div class="tc-head"><span class="tc-title">T2 · dezy_camp_followup_d3</span><span class="badge badge-amber">Trigger: D+3 · No booking</span></div>
+              <div class="tc-body">Hi <span class="tc-var">{{1}}</span> 🦷
+
+Your FREE scaling voucher *<span class="tc-var">{{2}}</span>* expires in *<span class="tc-var">{{3}}</span> days*.
+
+Your dental score was <span class="tc-var">{{4}}</span>/10. Our dentist recommended early treatment to avoid escalation costs.
+
+Book now (2 mins) → <span class="tc-var">{{5}}</span>
+
+Reply *HELP* for assistance 😊</div>
+              <div class="tc-note">💡 Variables: 1=first_name, 2=voucher_code, 3=days_left, 4=score, 5=booking_link · Send Tue–Thu 11am–1pm or 6pm–8pm for best open rates</div>
+            </div>
+
+            <div class="template-card">
+              <div class="tc-head"><span class="tc-title">T3 · dezy_appt_confirmation</span><span class="badge badge-teal">Trigger: On booking in Dezy system</span></div>
+              <div class="tc-body">✅ *Appointment Confirmed!*
+
+Hi <span class="tc-var">{{1}}</span>, you're booked at *Dezy <span class="tc-var">{{2}}</span>*
+
+📅 <span class="tc-var">{{3}}</span> · ⏰ <span class="tc-var">{{4}}</span>
+📍 <span class="tc-var">{{5}}</span>
+🎟 Show code *<span class="tc-var">{{6}}</span>* at reception
+
+See you soon! 🦷</div>
+              <div class="tc-note">💡 Include Google Maps link in variable 5 — reduces no-shows by ~18%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CRM EXPORT ── -->
+      <div id="tp-crm" class="tp">
+        <div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;">CRM Export & Integration</div>
+        <div style="font-size:12px;color:var(--g400);margin-bottom:18px;">Field mapping for lead handoff to your CRM. Export ready after each camp.</div>
+
+        <div class="card" style="margin-bottom:14px;overflow:hidden;">
+          <div style="padding:14px 16px;background:var(--g50);border-bottom:1px solid var(--g150);display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:13px;font-weight:800;color:var(--ink);">Field Mapping · Camp Platform → CRM Lead</div>
+            <button class="btn btn-sm btn-ghost">⬇ Download CSV Template</button>
+          </div>
+          <div style="padding:0;">
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;background:var(--g100);padding:8px 16px;border-bottom:1px solid var(--g200);">
+              <div style="font-size:9px;font-weight:800;color:var(--teal-3);text-transform:uppercase;letter-spacing:.7px;">Camp Platform Field</div>
+              <div></div>
+              <div style="font-size:9px;font-weight:800;color:#5C3FCA;text-transform:uppercase;letter-spacing:.7px;">CRM Lead Field</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">patient_id</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.external_id</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">name</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.full_name</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">phone</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.phone</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">dental_score</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.custom_score</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">gum_score · cavity_score</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.notes (JSON)</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">issues[]</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.tags[]</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">voucher_code</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.custom_voucher</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">camp_id</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.source_campaign</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;border-bottom:1px solid var(--g100);"><div class="crm-src">nearest_clinic_id</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.assigned_clinic</div></div>
+            <div style="display:grid;grid-template-columns:1fr 28px 1fr;"><div class="crm-src">voucher_redeemed · redeemed_at</div><div class="crm-arrow">→</div><div class="crm-dst">Lead.stage + Close Date</div></div>
+          </div>
+        </div>
+
+        <!-- Export actions -->
+        <div class="card cp" style="margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;">Export Options</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="border:1px solid var(--g200);border-radius:var(--r-lg);padding:14px;">
+              <div style="font-size:12px;font-weight:800;color:var(--ink);margin-bottom:3px;">📋 Full Lead Export</div>
+              <div style="font-size:11px;color:var(--g500);margin-bottom:10px;">All screened patients with scores, issues, voucher status</div>
+              <button class="btn btn-ink btn-sm btn-full">Download CSV</button>
+            </div>
+            <div style="border:1px solid var(--g200);border-radius:var(--r-lg);padding:14px;">
+              <div style="font-size:12px;font-weight:800;color:var(--ink);margin-bottom:3px;">🔥 High-Priority Leads</div>
+              <div style="font-size:11px;color:var(--g500);margin-bottom:10px;">Score &lt;60 · Not yet booked · Voucher valid</div>
+              <button class="btn btn-orange btn-sm btn-full">Download (34 leads)</button>
+            </div>
+            <div style="border:1px solid var(--g200);border-radius:var(--r-lg);padding:14px;">
+              <div style="font-size:12px;font-weight:800;color:var(--ink);margin-bottom:3px;">✅ Converted</div>
+              <div style="font-size:11px;color:var(--g500);margin-bottom:10px;">Voucher redeemed · Clinic visit completed</div>
+              <button class="btn btn-ghost btn-sm btn-full">Download (9 records)</button>
+            </div>
+            <div style="border:1px solid var(--g200);border-radius:var(--r-lg);padding:14px;">
+              <div style="font-size:12px;font-weight:800;color:var(--ink);margin-bottom:3px;">📊 HR Aggregate</div>
+              <div style="font-size:11px;color:var(--g500);margin-bottom:10px;">De-identified · For Infosys HR · No PII</div>
+              <button class="btn btn-ghost btn-sm btn-full">Download PDF</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--sky);border:1.5px solid rgba(0,184,196,.2);border-radius:var(--r-lg);padding:14px;">
+          <div style="font-size:12px;font-weight:800;color:var(--teal-3);margin-bottom:5px;">💡 Attribution Note</div>
+          <div style="font-size:12px;color:var(--g600);line-height:1.6;">All camp-sourced patients are tagged with <code style="background:rgba(0,184,196,.1);padding:1px 5px;border-radius:4px;font-family:var(--f-mono);font-size:11px;">source=camp · camp_id=DEZY-BLR-0127</code> in the booking system. Revenue from these patients is attributed to the camp for 60 days post-camp date for ROI calculation.</div>
+        </div>
+      </div>
+
+      <!-- ── METRICS ── -->
+      <div id="tp-metrics" class="tp">
+        <div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;">Key Metrics to Track</div>
+        <div style="font-size:12px;color:var(--g400);margin-bottom:18px;">Optimisation framework — what to measure, why, and what good looks like</div>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="mc-icon">🎯</div><div class="mc-name">Report Delivery Rate</div><div class="mc-desc">% screened patients who receive Gallabox WhatsApp within 10 min of form submit.</div><div class="mc-formula">Reports Sent / Screened × 100</div><div class="mc-target">Target: ≥95%</div></div>
+          <div class="metric-card"><div class="mc-icon">👆</div><div class="mc-name">Report Link CTR</div><div class="mc-desc">Engagement signal. Low CTR = message timing or copy issue. Test Gallabox templates.</div><div class="mc-formula">Link Clicks / Reports Sent × 100</div><div class="mc-target">Target: ≥60%</div></div>
+          <div class="metric-card"><div class="mc-icon">📅</div><div class="mc-name">Camp → Booking Rate</div><div class="mc-desc">Primary conversion metric. Screened → appointment on Dezy booking system.</div><div class="mc-formula">Bookings / Screened × 100</div><div class="mc-target">Target: ≥25%</div></div>
+          <div class="metric-card"><div class="mc-icon">🦷</div><div class="mc-name">Booking → Visit Rate</div><div class="mc-desc">Show-up rate. D-1 reminder via Gallabox improves this by ~18–22%.</div><div class="mc-formula">Visits / Bookings × 100</div><div class="mc-target">Target: ≥70%</div></div>
+          <div class="metric-card"><div class="mc-icon">🎟</div><div class="mc-name">Voucher Redemption Rate</div><div class="mc-desc">Low redemption = friction in booking or expiry too short. Track by camp type.</div><div class="mc-formula">Redeemed / Issued × 100</div><div class="mc-target">Target: ≥30%</div></div>
+          <div class="metric-card"><div class="mc-icon">💰</div><div class="mc-name">Revenue per Camp</div><div class="mc-desc">Total revenue from camp-sourced patients within 60-day attribution window.</div><div class="mc-formula">Σ Revenue (camp patients, 60d)</div><div class="mc-target">Target: ≥₹50,000</div></div>
+          <div class="metric-card"><div class="mc-icon">⏱</div><div class="mc-name">Screening Time / Patient</div><div class="mc-desc">Operational efficiency. Drives whether you can do 150/day. Track by dentist.</div><div class="mc-formula">Camp Duration / Total Screened</div><div class="mc-target">Target: ≤7 minutes</div></div>
+          <div class="metric-card"><div class="mc-icon">📊</div><div class="mc-name">Avg Dental Score</div><div class="mc-desc">Population health KPI. Use to segment camps (corporate vs. community profiles differ).</div><div class="mc-formula">Sum(All Scores) / Screened</div><div class="mc-target">Benchmark: 6–7 (corporate cohort)</div></div>
+          <div class="metric-card"><div class="mc-icon">📈</div><div class="mc-name">Camp ROI</div><div class="mc-desc">Revenue / camp cost. Include dentist time, materials, travel. Target 10x minimum.</div><div class="mc-formula">Revenue / Camp Cost</div><div class="mc-target">Target: ≥10x</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DEZY CAMP PLATFORM — SCORING ENGINE v2
+   Whole numbers 0–10. Higher = healthier.
+══════════════════════════════════════════ */
+
+/* ── NAV ── */
+function go(id) {
+  document.querySelectorAll('.screen,.screen-flex').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.classList.contains('screen-flex') ? 'flex' : 'block';
+  el.classList.add('active');
+  document.querySelectorAll('.dnav-btn').forEach(b => b.classList.remove('on'));
+  const map = ['s2','s3','s4','s5','s6','s7','s8','s9'];
+  const idx = map.indexOf(id);
+  const btns = document.querySelectorAll('.dnav-btn');
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add('on');
+  if (id === 's7') { setTimeout(() => { const r = computeScores(); renderReport(r); syncReportFlags(); }, 300); }
+  window.scrollTo(0, 0);
+}
+
+/* ── FORM INTERACTIONS ── */
+function solo(el) {
+  const c = el.closest('.card.cp') || el.closest('.card');
+  if (c) c.querySelectorAll('.opt-row').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function selSev(el) {
+  el.parentElement.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+/* ══════════════════════════════════════════
+   READ SELECTIONS FROM DOM
+══════════════════════════════════════════ */
+function readQ(qName) {
+  const container = document.querySelector(`[data-q="${qName}"]`);
+  if (!container) return 0;
+  const sel = container.querySelector('.opt-row.sel, .sev-btn.sel');
+  return sel ? parseInt(sel.getAttribute('data-val') || '0', 10) : 0;
+}
+function readObs(obsName) {
+  const el = document.querySelector(`[data-obs="${obsName}"]`);
+  return el ? el.classList.contains('sel') : false;
+}
+function readTag(tagName) {
+  const el = document.querySelector(`[data-tag="${tagName}"]`);
+  return el ? el.classList.contains('sel') : false;
+}
+function readFinding(findingName) {
+  const el = document.querySelector(`[data-finding="${findingName}"]`);
+  return el ? el.classList.contains('sel') : false;
+}
+
+/* ══════════════════════════════════════════
+   COMPUTE SCORES
+   Each dimension: start at 10, subtract deductions, floor 0, cap 10
+══════════════════════════════════════════ */
+function computeScores() {
+  // ── Read all inputs ──
+  const lastVisit   = readQ('lastVisit');   // 0=<6mo  1=6-12mo  2=1-3yr  3=3+yr
+  const sensitivity = readQ('sensitivity'); // 0=none  1=mild    2=mod    3=severe
+  const bleeding    = readQ('bleeding');    // 0=never 1=occ     2=freq   3=spont
+  const pain        = readQ('pain');        // 0=none  1=mild    2=mod    3=severe
+  const diabetes    = readTag('diabetes');
+  const heartDisease= readTag('heartDisease');
+
+  const calculus    = readQ('calculus');    // 0=none  1=mild    2=mod    3=severe
+  const caries      = readQ('caries');      // 0=none  1=1tooth  2=2-3   3=4+
+  const plaque      = readQ('plaque');      // 0=none  1=mild    2=mod    3=heavy
+
+  const gingInflamed  = readObs('inflamed');
+  const gingivBOP     = readObs('bop');
+  const gingivRecess  = readObs('recession');
+  const gingivPocket  = readObs('pocketing');
+
+  const toothWear   = readFinding('toothWear');
+  const missingTeeth= readFinding('missingTeeth');
+  const crowding    = readFinding('crowding');
+  const enamelErosion=readFinding('enamelErosion');
+  const lesions     = readFinding('lesions');
+
+  const brushing    = readQ('brushing');    // 0=2x/day  1=once  2=irreg  3=rarely
+  const flossing    = readQ('flossing');    // 0=daily   1=occ   2=rarely 3=never
+  const tobacco     = readQ('tobacco');     // 0=none    1=occ   2=reg    3=smokeless
+  const sugar       = readQ('sugar');       // 0=rarely  1=1-2x  2=3-5x  3=frequent
+
+  /* ─────────────────────────────────────
+     DIM 1 — GUM HEALTH (30%)
+     Inputs: calculus, gingival obs, bleeding gums
+  ───────────────────────────────────── */
+  let gum = 10;
+  gum -= [0, 2, 4, 7][calculus];         // calculus penalty
+  if (gingInflamed) gum -= 1;            // inflammation
+  if (gingivBOP)    gum -= 3;            // bleeding on probe
+  if (gingivRecess) gum -= 1;            // recession
+  if (gingivPocket) gum -= 5;            // pocketing (most severe)
+  gum -= [0, 0, 1, 2][bleeding];         // patient-reported bleeding adds context
+  gum = Math.max(0, Math.min(10, gum));
+
+  /* ─────────────────────────────────────
+     DIM 2 — CAVITY RISK (25%)
+     Inputs: caries, sugar, lastVisit
+  ───────────────────────────────────── */
+  let cavity = 10;
+  cavity -= [0, 2, 4, 7][caries];        // decay count penalty
+  cavity -= [0, 1, 3, 5][sugar];         // sugar intake risk
+  if (lastVisit === 0) cavity += 1;      // bonus: recent checkup = proactive patient
+  cavity -= [0, 1, 2, 3][pain];          // pain often signals cavity depth
+  cavity = Math.max(0, Math.min(10, cavity));
+
+  /* ─────────────────────────────────────
+     DIM 3 — ORAL HYGIENE (25%)
+     Inputs: brushing, flossing, plaque
+  ───────────────────────────────────── */
+  let hygiene = 10;
+  hygiene -= [0, 2, 4, 6][brushing];     // brushing frequency
+  hygiene -= [0, 1, 2, 3][flossing];     // flossing habit
+  hygiene -= [0, 1, 3, 5][plaque];       // visible plaque accumulation
+  if (enamelErosion) hygiene -= 1;       // erosion suggests acid exposure
+  hygiene = Math.max(0, Math.min(10, hygiene));
+
+  /* ─────────────────────────────────────
+     DIM 4 — RISK FACTORS (20%)
+     Inputs: tobacco, sensitivity, systemic
+  ───────────────────────────────────── */
+  let risk = 10;
+  risk -= [0, 2, 5, 6][tobacco];         // tobacco is highest single risk factor
+  risk -= [0, 1, 2, 3][sensitivity];     // sensitivity indicates enamel/nerve exposure
+  if (diabetes)     risk -= 1;           // systemic: worsens gum disease
+  if (heartDisease) risk -= 1;           // systemic: linked to periodontitis
+  if (lesions)      risk -= 2;           // oral lesions flag for clinical review
+  risk = Math.max(0, Math.min(10, risk));
+
+  /* ─────────────────────────────────────
+     OVERALL SCORE — weighted average
+  ───────────────────────────────────── */
+  const overall = Math.round(gum * 0.30 + cavity * 0.25 + hygiene * 0.25 + risk * 0.20);
+
+  /* ─────────────────────────────────────
+     ISSUES — build list from findings
+  ───────────────────────────────────── */
+  const issues = [];
+  if (calculus >= 2) issues.push({ sev:'critical', text:`${['','Mild','Moderate','Severe'][calculus]} Calculus Buildup (Supragingival)`, label:'MODERATE' });
+  else if (calculus === 1) issues.push({ sev:'moderate', text:'Mild Calculus Buildup', label:'MILD' });
+  if (gingivBOP && gingivPocket) issues.push({ sev:'critical', text:'Gingival Inflammation + BOP + Pocketing', label:'CRITICAL' });
+  else if (gingivBOP) issues.push({ sev:'moderate', text:'Gingival Inflammation + Bleeding on Probing', label:'MODERATE' });
+  else if (gingInflamed) issues.push({ sev:'mild', text:'Mild Gingival Inflammation', label:'MILD' });
+  if (gingivRecess) issues.push({ sev:'moderate', text:'Gingival Recession Observed', label:'MODERATE' });
+  if (caries === 3) issues.push({ sev:'critical', text:'Multiple Caries (4+ teeth) — Urgent', label:'CRITICAL' });
+  else if (caries === 2) issues.push({ sev:'moderate', text:'Early–Moderate Caries — 2–3 teeth', label:'MODERATE' });
+  else if (caries === 1) issues.push({ sev:'mild', text:'Early Stage Caries — 1 tooth', label:'MILD' });
+  if (sensitivity >= 2) issues.push({ sev: sensitivity===3?'critical':'moderate', text:`${['','Mild','Moderate','Severe'][sensitivity]} Tooth Sensitivity`, label:['','MILD','MODERATE','HIGH'][sensitivity] });
+  else if (sensitivity === 1) issues.push({ sev:'mild', text:'Mild Tooth Sensitivity', label:'MILD' });
+  if (toothWear) issues.push({ sev:'mild', text:'Tooth Wear / Attrition (may indicate bruxism)', label:'MILD' });
+  if (missingTeeth) issues.push({ sev:'moderate', text:'One or More Missing Teeth — Replacement Advised', label:'MODERATE' });
+  if (crowding) issues.push({ sev:'mild', text:'Dental Crowding / Malocclusion Observed', label:'MILD' });
+  if (enamelErosion) issues.push({ sev:'mild', text:'Enamel Erosion Detected', label:'MILD' });
+  if (lesions) issues.push({ sev:'critical', text:'Oral Lesion(s) Present — Requires Clinical Review', label:'HIGH' });
+  if (tobacco >= 2) issues.push({ sev: tobacco===3?'critical':'moderate', text:`${tobacco===3?'Smokeless Tobacco (High Risk)':'Regular Smoking'} — Significant Oral Cancer Risk`, label:'HIGH' });
+  if (pain >= 2) issues.push({ sev: pain===3?'critical':'moderate', text:`${pain===3?'Severe':'Moderate'} Dental Pain / Jaw Discomfort`, label:pain===3?'CRITICAL':'MODERATE' });
+  if (bleeding >= 2) issues.push({ sev:'moderate', text:`${bleeding===3?'Spontaneous':'Frequent'} Gum Bleeding — Periodontal Flag`, label:'MODERATE' });
+  if (issues.length === 0) issues.push({ sev:'mild', text:'No major issues detected — routine maintenance advised', label:'GOOD' });
+
+  return { overall, gum, cavity, hygiene, risk, issues,
+           missingTeeth, crowding, toothWear, caries, calculus,
+           gingivBOP, gingInflamed, sensitivity, tobacco, lesions, pain };
+}
+
+/* ══════════════════════════════════════════
+   RENDER REPORT
+══════════════════════════════════════════ */
+function scoreColor(s) {
+  return s >= 9 ? '#12B76A' : s >= 7 ? '#34D399' : s >= 5 ? '#F79009' : s >= 3 ? '#FF6B35' : '#F04438';
+}
+function scoreBand(s) {
+  if (s >= 9) return { label:'Excellent', cls:'score-good' };
+  if (s >= 7) return { label:'Good', cls:'score-good' };
+  if (s >= 5) return { label:'Fair — Needs Attention', cls:'score-fair' };
+  if (s >= 3) return { label:'Poor — Consult Soon', cls:'score-poor' };
+  return { label:'Critical — Urgent Care', cls:'score-critical' };
+}
+function issueRowHTML(issue) {
+  const colors = { critical:'var(--red)', moderate:'var(--amber)', mild:'var(--teal)' };
+  const cls    = { critical:'issue-critical', moderate:'issue-moderate', mild:'issue-mild' };
+  const dot    = colors[issue.sev] || 'var(--g400)';
+  return `<div class="issue-row ${cls[issue.sev]||'issue-mild'}">
+    <div class="issue-row-dot" style="background:${dot};"></div>
+    <div class="issue-row-text">${issue.text}</div>
+    <div class="issue-row-sev">${issue.label}</div>
+  </div>`;
+}
+
+function renderReport(r) {
+  // ── Ring animation ──
+  const ring = document.getElementById('v2-ring-fill');
+  const num  = document.getElementById('v2-score-num');
+  if (ring) {
+    const circ = 2 * Math.PI * 72;
+    ring.style.strokeDasharray  = circ;
+    ring.style.strokeDashoffset = circ;
+    ring.setAttribute('stroke', scoreColor(r.overall));
+    setTimeout(() => { ring.style.strokeDashoffset = circ * (1 - r.overall / 10); }, 150);
+  }
+  if (num) {
+    num.style.color = scoreColor(r.overall);
+    let c = 0;
+    const t = setInterval(() => {
+      c = Math.min(c + r.overall / 60, r.overall);
+      num.textContent = Math.round(c);
+      if (c >= r.overall) clearInterval(t);
+    }, 22);
+  }
+
+  // ── Score label ──
+  const band = scoreBand(r.overall);
+  const lbl = document.getElementById('v2-score-label');
+  if (lbl) { lbl.textContent = band.label; lbl.className = 'score-label ' + band.cls; }
+
+  // ── Dimension bars ──
+  const dims = [
+    { s:'dim-s1', b:'dim-b1', val:r.gum },
+    { s:'dim-s2', b:'dim-b2', val:r.cavity },
+    { s:'dim-s3', b:'dim-b3', val:r.hygiene },
+    { s:'dim-s4', b:'dim-b4', val:r.risk },
+  ];
+  dims.forEach((d, i) => {
+    const sEl = document.getElementById(d.s);
+    const bEl = document.getElementById(d.b);
+    const col = scoreColor(d.val);
+    if (sEl) sEl.style.color = col;
+    setTimeout(() => {
+      if (bEl) bEl.style.width = (d.val / 10 * 100) + '%';
+      if (sEl) {
+        let c = 0;
+        const t = setInterval(() => {
+          c = Math.min(c + d.val / 50, d.val);
+          sEl.textContent = Math.round(c);
+          if (c >= d.val) clearInterval(t);
+        }, 20);
+      }
+    }, 300 + i * 100);
+  });
+
+  // ── Issues list ──
+  const issuesWrap = document.getElementById('report-issues-list');
+  if (issuesWrap) {
+    issuesWrap.innerHTML = r.issues.map(issueRowHTML).join('');
+  }
+
+  // ── Pathway flags (always show General, conditionally Aligners/Implants) ──
+  // Update aligner flag text based on findings
+  const flagA = document.getElementById('report-flag-aligners');
+  if (flagA) {
+    const alignerReason = r.crowding ? 'Crowding observed' : 'Spacing / bite pattern noted';
+    flagA.querySelector('div:nth-child(2) > div:nth-child(2)').textContent =
+      alignerReason + ' — suitable for clear aligner therapy';
+  }
+  // Update implant flag text
+  const flagI = document.getElementById('report-flag-implants');
+  if (flagI) {
+    flagI.querySelector('div:nth-child(2) > div:nth-child(2)').textContent =
+      'Missing tooth / teeth detected — dental implant or bridge recommended';
+  }
+
+  // ── Recs: show/hide scaling based on calculus/BOP ──
+  const needsScaling = r.calculus >= 1 || r.gingivBOP || r.gingInflamed;
+  const scalingRec = document.getElementById('rec-scaling');
+  if (scalingRec) scalingRec.style.display = needsScaling ? 'flex' : 'none';
+
+  // ── Recs: show/hide fillings based on caries ──
+  const fillingsRec = document.getElementById('rec-fillings');
+  if (fillingsRec) {
+    if (r.caries === 0) {
+      fillingsRec.style.display = 'none';
+    } else {
+      fillingsRec.style.display = 'flex';
+      const teethLabel = r.caries === 1 ? '1 tooth' : r.caries === 2 ? '2–3 teeth' : '4+ teeth';
+      const titleEl = fillingsRec.querySelector('.rec-title');
+      if (titleEl) titleEl.textContent = `Composite Resin Filling (${teethLabel})`;
+    }
+  }
+
+  // ── Sync pathway flags visibility ──
+  syncReportFlags();
+}
+
+/* ── NEXT STEPS TOGGLE ── */
+const nextSteps = { general: true, aligners: true, implants: false };
+function toggleNext(type) {
+  nextSteps[type] = !nextSteps[type];
+  const card  = document.getElementById('nxt-' + type);
+  const check = document.getElementById('nxt-' + type + '-check');
+  if (!card || !check) return;
+  if (nextSteps[type]) {
+    card.style.border = '1.5px solid var(--teal)';
+    card.style.background = 'rgba(0,184,196,.06)';
+    check.style.background = 'var(--teal)';
+    check.style.color = '#fff';
+    const nameEl = card.querySelector('.rec-title, div > div:first-child');
+    if (nameEl) nameEl.style.color = 'var(--ink)';
+  } else {
+    card.style.border = '1.5px solid var(--g200)';
+    card.style.background = 'transparent';
+    check.style.background = 'var(--g200)';
+    check.style.color = 'var(--g400)';
+    const nameEl = card.querySelector('.rec-title, div > div:first-child');
+    if (nameEl) nameEl.style.color = 'var(--g600)';
+  }
+  syncReportFlags();
+}
+function syncReportFlags() {
+  const show = (id, visible) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visible ? (id.startsWith('rec-') ? 'block' : 'flex') : 'none';
+  };
+  show('report-flag-aligners', nextSteps.aligners);
+  show('rec-aligners',         nextSteps.aligners);
+  show('report-flag-implants', nextSteps.implants);
+  show('rec-implants',         nextSteps.implants);
+}
+
+/* ── ANIMATE DIMS (called from habits → generate button) ── */
+function animateDimScores() {
+  setTimeout(() => { const r = computeScores(); renderReport(r); syncReportFlags(); }, 200);
+}
+
+/* ── THANK YOU ── */
+function initTY() {
+  const el = document.getElementById('ty-check');
+  if (el) { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'popIn .42s cubic-bezier(.18,.89,.32,1.28)'; }
+  const vc = document.getElementById('v2-voucher-code');
+  if (vc) { const n = Math.floor(1000 + Math.random() * 9000); vc.textContent = 'DEZY-SC-' + n; }
+}
+function copyV2() {
+  const vc = document.getElementById('v2-voucher-code');
+  const btn = document.querySelector('.v-copy');
+  if (vc && navigator.clipboard) {
+    navigator.clipboard.writeText(vc.textContent).then(() => {
+      if (btn) { btn.textContent = 'Copied!'; btn.style.color = '#12B76A'; setTimeout(() => { btn.textContent = 'Copy Code'; btn.style.color = ''; }, 2200); }
+    });
+  }
+}
+
+/* ── ADMIN TAB ── */
+function sw(tabId, navEl) {
+  document.querySelectorAll('.tp').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('on'));
+  const p = document.getElementById(tabId); if (p) p.classList.add('on');
+  if (navEl) navEl.classList.add('on');
+  const titles = { 'tp-overview':'Campaign Overview','tp-patients':'Patient Records','tp-voucher':'Voucher Lookup','tp-scoring':'Scoring Engine','tp-gallabox':'Gallabox Integration','tp-crm':'CRM Export & Integration','tp-metrics':'Key Metrics' };
+  const t = document.getElementById('at-title');
+  if (t && titles[tabId]) t.textContent = titles[tabId];
+}
+
+/* ── VOUCHER LOOKUP ── */
+const mockVouchers = {
+  'DEZY-SC-8472': { name:'Arjun Sharma', phone:'+91 98765 43210', camp:'Infosys Wellness Day · 27 Jan 2025', score:'6/10', status:'valid', expiry:'11 Feb 2025' },
+  'DEZY-SC-1234': { name:'Priya Menon', phone:'+91 91234 56789', camp:'Infosys Wellness Day · 27 Jan 2025', score:'8/10', status:'redeemed', expiry:'11 Feb 2025' },
+};
+function lookupVoucher() {
+  const code = document.getElementById('vcode-input').value.trim().toUpperCase();
+  const result = document.getElementById('lookup-result');
+  const v = mockVouchers[code];
+  if (!code) { result.className = 'lookup-result'; return; }
+  if (!v) {
+    result.className = 'lookup-result invalid';
+    result.innerHTML = `<div class="lr-status-row"><div class="lr-ico">❌</div><div><div class="lr-status-label" style="color:var(--red-2);">Invalid Voucher</div><div style="font-size:12px;color:var(--g500);">Code not found. Verify and try again.</div></div></div>`;
+    return;
+  }
+  if (v.status === 'redeemed') {
+    result.className = 'lookup-result invalid';
+    result.innerHTML = `<div class="lr-status-row"><div class="lr-ico">⚠️</div><div><div class="lr-status-label" style="color:var(--amber-2);">Already Redeemed</div><div style="font-size:12px;color:var(--g500);">This voucher has already been used.</div></div></div><div class="lr-patient-grid"><div class="lr-field"><div class="lr-field-lbl">Patient</div><div class="lr-field-val">${v.name}</div></div><div class="lr-field"><div class="lr-field-lbl">Camp</div><div class="lr-field-val" style="font-size:11px;">${v.camp}</div></div></div>`;
+    return;
+  }
+  result.className = 'lookup-result found';
+  result.innerHTML = `<div class="lr-status-row"><div class="lr-ico">✅</div><div><div class="lr-status-label" style="color:var(--green-2);">Valid — Free Scaling</div><div style="font-size:12px;color:var(--g500);">Proceed with scaling treatment.</div></div></div><div class="lr-patient-grid"><div class="lr-field"><div class="lr-field-lbl">Patient Name</div><div class="lr-field-val">${v.name}</div></div><div class="lr-field"><div class="lr-field-lbl">Mobile</div><div class="lr-field-val" style="font-family:var(--f-mono);">${v.phone}</div></div><div class="lr-field"><div class="lr-field-lbl">Dental Score</div><div class="lr-field-val" style="color:var(--amber-2);">${v.score}</div></div><div class="lr-field"><div class="lr-field-lbl">Valid Until</div><div class="lr-field-val">${v.expiry}</div></div><div class="lr-field" style="grid-column:1/-1"><div class="lr-field-lbl">Camp</div><div class="lr-field-val" style="font-size:12px;">${v.camp}</div></div></div><button class="btn btn-green btn-full" onclick="markRedeemed('${code}')">✓ Mark as Redeemed & Close</button>`;
+}
+function markRedeemed(code) {
+  if (mockVouchers[code]) mockVouchers[code].status = 'redeemed';
+  const result = document.getElementById('lookup-result');
+  result.className = 'lookup-result'; result.innerHTML = '';
+  document.getElementById('vcode-input').value = '';
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:rgba(18,183,106,.1);border:1px solid rgba(18,183,106,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;font-weight:700;color:var(--green-2);margin-top:8px;';
+  banner.textContent = '✅ Voucher marked as redeemed. Lead updated in system.';
+  result.parentElement.appendChild(banner);
+  setTimeout(() => banner.remove(), 3000);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => go('s2'));
+</script>
+</html>
